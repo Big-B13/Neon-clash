@@ -34,6 +34,15 @@ function grabArray(src, marker) {
 }
 
 const matFn = grabByBrace(html, 'function mat(color,emis,ei)');
+/* the shared material-preset block the whole cast is built from */
+const surfSrc = (() => {
+  try {
+    const i = html.indexOf('const SURF=');
+    const k = html.indexOf('function surf(', i);
+    if (i < 0 || k < 0) return '';
+    return html.slice(i, k) + grabByBrace(html, 'function surf(');
+  } catch (e) { return ''; }
+})();
 const letterFn = '';
 const bEmblemFn = (() => { try { return grabByBrace(html, 'function makeBEmblem('); } catch (e) { return ''; } })();
 const buildFn = grabByBrace(html, 'function buildFighter(d,scale)');
@@ -85,6 +94,7 @@ vm.runInContext(prelude, ctx, { filename: 'prelude' });
 
 vm.runInContext(`__out.ROSTER = ${rosterSrc};`, ctx, { filename: 'roster' });
 vm.runInContext(matFn, ctx, { filename: 'mat' });
+if (surfSrc) vm.runInContext(surfSrc, ctx, { filename: 'surf' });
 if (letterFn) vm.runInContext(letterFn, ctx, { filename: 'letterTex' });
 if (bEmblemFn) vm.runInContext(bEmblemFn, ctx, { filename: 'makeBEmblem' });
 vm.runInContext(buildFn, ctx, { filename: 'buildFighter' });
@@ -100,29 +110,40 @@ function collect(model) {
   const tris = [];
   model.traverse((o) => {
     if (!o.isMesh || o.visible === false) return;
+    // an invisible parent hides the whole subtree (traverse still descends into it)
+    for (let par = o.parent; par; par = par.parent) if (par.visible === false) return;
     // skip invisible-by-flag placeholders
     const g = o.geometry;
     if (!g || !g.attributes || !g.attributes.position) return;
     const pos = g.attributes.position;
+    const nrm = g.attributes.normal;
     const idx = g.index;
     const n = idx ? idx.count : pos.count;
     const m = o.matrixWorld;
+    const nm = new THREE.Matrix3().getNormalMatrix(m);
     const mat = Array.isArray(o.material) ? o.material[0] : o.material;
     const col = mat && mat.color ? [mat.color.r, mat.color.g, mat.color.b] : [1, 1, 1];
     const emi = mat && mat.emissive ? [mat.emissive.r, mat.emissive.g, mat.emissive.b] : [0, 0, 0];
     const ei = (mat && mat.emissiveIntensity !== undefined) ? mat.emissiveIntensity : 0;
     const op = (mat && mat.opacity !== undefined) ? mat.opacity : 1;
+    const rough = (mat && mat.roughness !== undefined) ? mat.roughness : 0.45;
+    const metal = (mat && mat.metalness !== undefined) ? mat.metalness : 0.25;
     const transparent = !!(mat && mat.transparent);
     const additive = !!(mat && mat.blending === THREE.AdditiveBlending);
     const basic = !!(mat && mat.isMeshBasicMaterial);
     for (let i = 0; i < n; i += 3) {
-      const t = [];
+      const t = [], vn = [];
       for (let k = 0; k < 3; k++) {
         const vi = idx ? idx.getX(i + k) : (i + k);
         const p = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi)).applyMatrix4(m);
         t.push([p.x, p.y, p.z]);
+        if (nrm) {
+          const nv = new THREE.Vector3(nrm.getX(vi), nrm.getY(vi), nrm.getZ(vi)).applyMatrix3(nm).normalize();
+          vn.push([nv.x, nv.y, nv.z]);
+        }
       }
-      tris.push({ p: t, c: col, e: emi, ei, o: op, tr: transparent, ad: additive, ba: basic,
+      tris.push({ p: t, vn: vn.length === 3 ? vn : null, c: col, e: emi, ei, o: op,
+                  r: rough, m: metal, tr: transparent, ad: additive, ba: basic,
                   name: o.name || '', sc: o.scale.x });
     }
   });

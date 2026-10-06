@@ -1,7 +1,40 @@
-NEON CLASH 3D — v2.0
-====================
+NEON CLASH 3D — v3.0 "ULTIMATE" ART PASS
+======================================
 A neon/synthwave platform fighter (Smash-style) that runs entirely in the browser.
 No install, no internet needed: just open index.html in Chrome, Edge or Firefox.
+
+V3 — WHAT CHANGED (the whole cast was rebuilt)
+  · SURFACES INSTEAD OF BLOCKS. Every fighter is built from a deliberate material
+    language (SURF/surf()): fabric, vinyl, painted armour, machined steel, rubber,
+    hard-light. Roughness/metalness/specular are authored per part, so armour is
+    glossy, cloth is matte, blades are mirrors. Edges are bevelled: no more raw
+    boxes standing in for shoulders, hands or shoulders.
+  · REAL PROPORTIONS. A shared humanoid skeleton with long legs, a real neck,
+    shaped jaw, tapered upper arms/forearms, deltoids, elbows, wrists, proper
+    fists, thighs, knees, calves and shoes with toe caps. Bigger heads for a
+    readable silhouette, per-character build profiles for all four fighters.
+  · DRAWING MATCHES THE HITBOX. The old build drew every fighter at 1.3x with no
+    relation to its collision box, so weapons swept through heads without ever
+    connecting. Fighters are now measured off the finished rig (buildDims) and
+    scaled to fit inside the box the game collides against, hitboxes are bound to
+    the posed frame (hitX/hitY), and Vector's data-blade EXTENDS through a swing
+    so the plasma on screen is as long as the hitbox that lands.
+  · ANIMATION PASS. Stride cycle with hip bob and torso lean, arc-following air
+    poses, breathing idle with weight shift, a flinch/recoil pose for hitstun,
+    weapon-arm guard so arms stop flailing, and per-character secondary motion:
+    Kage's sash, Vector's coat tails + containment rings, Pulse's thrusters and
+    spinning coils, Blip's halo and orbiting shards.
+  · FEEL. Motion trails smeared along a blade's last two frames, a live weapon
+    glow that lights the blade up when an attack is about to connect, per-fighter
+    key light + face light, brighter neon rims, tighter/telephoto match camera
+    (fov 41), tighter arena so the duel fills the frame.
+  · GLOW-UP. Shields are character-specific (hex circuit panel, mecha curtain,
+    star bubble). Pulse is no longer a recoloured Samus: sealed under-suit, chest
+    reactor, layered pauldrons, swept-crest helmet, backpack thrusters and a
+    three-barrel cannon on accelerator coils. Vector is a cyber-ronin with a
+    plasma emitter and coat tails. Blip has a visible star-core, antenna, arc
+    smile and a rocket gravity hammer. Kage keeps every piece of the original
+    design pack and gains shoulder caps, a crowned hat, a jaw wrap and a knee.
 
 FILES
   index.html     the whole game (3D scene, physics, AI, UI)
@@ -49,9 +82,12 @@ ROSTER (all original characters)
   PULSE      gunner. Every normal fires the arm cannon; hold G to charge the pulse beam.
   BLIP       floaty multi-jump. Six jumps, slow drift, grav hammer, arc-jump recovery.
 
-  VECTOR, PULSE and BLIP are clearly-labelled PLACEHOLDER slots: fully playable and
-  they cover the remaining engine archetypes, but they stand in until the rest of the
-  cast is designed. KAGE.EXE is the finished flagship build.
+  VECTOR, PULSE and BLIP are no longer placeholders. Each one has a full art pass
+  (described above) and four tournament palettes cycled with C on the select screen:
+    VECTOR  DEFAULT / CYBER SAKURA / SHOGUN GOLD / VOID SPECTER
+    PULSE   DEFAULT / PHAZON COBALT / FUSION MAGENTA / STEALTH TITAN
+    BLIP    DEFAULT / STARLIGHT PINK / MINT COMET / SOLAR NOVA
+  KAGE.EXE keeps his seven-palette pack from the original design sheet.
 
   BALANCE NOTE: across 27 CPU-vs-CPU test matches KAGE.EXE wins clearly more than his
   share (he is the flagship, but he is probably still a little strong); PULSE is the
@@ -74,8 +110,12 @@ DEV TOOLS (not needed to play)
                       PLAN=kit   hits every move of every character, reports damage
                       PLAN=kage  KAGE.EXE signature-move assertions
     export.js         pulls the REAL buildFighter() output out of index.html
-    raster.py         renders it to PNG (four views per fighter)
-    roster-v1.png     the v1 cast, v2 cast, and KAGE.EXE costume sheets
+    raster.py         renders it to PNG (four views per fighter, smooth-shaded)
+    scene_raster.py   raycast-free software render of the live match scene
+    roster-v1.png     v1 cast,  roster-v2.png v2 cast
+    roster-v3.png     the V3 art pass (all four fighters, four views each)
+    bigb-ingame.png   BIG-B captured in-game through the real game camera
+    kage-costumes.png all seven KAGE.EXE palettes
     kage-costumes.png all seven KAGE.EXE palettes
   Usage:
     cd devtools && node harness.js            # full match test

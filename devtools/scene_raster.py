@@ -138,14 +138,29 @@ def render_shot(shot, W, H, SS=2):
     items.sort(key=lambda e: -max(e[3]))
 
     for (t, sx, sy, z, n, centroid) in items:
-        col = shade(np.array(t["c"], dtype=np.float64), np.array(t["e"], dtype=np.float64),
-                    float(t["ei"] or 0), n, centroid, bool(t["ba"]), cam_pos)
-        if not bool(t["ba"]) and not bool(t["ad"]):
+        base_c = np.array(t["c"], dtype=np.float64)
+        emis_c = np.array(t["e"], dtype=np.float64)
+        ei_v = float(t["ei"] or 0)
+        is_basic = bool(t["ba"])
+        vn = t.get("vn")
+        if vn and not is_basic:
+            c0 = shade(base_c, emis_c, ei_v, np.array(vn[0], dtype=np.float64), centroid, False, cam_pos)
+            c1 = shade(base_c, emis_c, ei_v, np.array(vn[1], dtype=np.float64), centroid, False, cam_pos)
+            c2 = shade(base_c, emis_c, ei_v, np.array(vn[2], dtype=np.float64), centroid, False, cam_pos)
+            col = (c0 + c1 + c2) / 3.0
+        else:
+            col = shade(base_c, emis_c, ei_v, n, centroid, is_basic, cam_pos)
+            c0 = c1 = c2 = col
+        if not is_basic and not bool(t["ad"]):
             col = apply_fog(col, centroid)
+            c0 = apply_fog(c0, centroid)
+            c1 = apply_fog(c1, centroid)
+            c2 = apply_fog(c2, centroid)
         opacity = float(t["o"])
         additive = bool(t["ad"])
         transparent = bool(t["tr"])
         col = np.clip(col, 0, 1.6)
+        c0 = np.clip(c0, 0, 1.6); c1 = np.clip(c1, 0, 1.6); c2 = np.clip(c2, 0, 1.6)
         x0 = int(max(0, math.floor(sx.min()))); x1 = int(min(Ws - 1, math.ceil(sx.max())))
         y0 = int(max(0, math.floor(sy.min()))); y1 = int(min(Hs - 1, math.ceil(sy.max())))
         if x1 < x0 or y1 < y0:
@@ -160,7 +175,7 @@ def render_shot(shot, W, H, SS=2):
         inside = (w0 >= -1e-6) & (w1 >= -1e-6) & (w2 >= -1e-6)
         if not inside.any():
             continue
-        iz = w0 / z[0] + w1 / z[1] + w2 / z[2]
+        iz = w1 / z[0] + w2 / z[1] + w0 / z[2]
         zz = np.where(iz > 1e-9, 1.0 / np.maximum(iz, 1e-9), 1e9)
         sl = (slice(y0, y1 + 1), slice(x0, x1 + 1))
         if transparent:
@@ -181,7 +196,12 @@ def render_shot(shot, W, H, SS=2):
         m = inside & (zz < depth[sl])
         if not m.any():
             continue
-        img[sl][m] = col
+        if vn and not is_basic:
+            # barycentric weights: w1 is vertex 0, w2 is vertex 1, w0 is vertex 2
+            l0 = w1[m][:, None]; l1 = w2[m][:, None]; l2 = w0[m][:, None]
+            img[sl][m] = l0 * c0[None, :] + l1 * c1[None, :] + l2 * c2[None, :]
+        else:
+            img[sl][m] = col
         depth[sl][m] = zz[m]
 
     # ---------- textured markers: the synthwave sun ----------

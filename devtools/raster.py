@@ -69,6 +69,15 @@ def render_view(tris, yaw, pitch, w, h, zoom, bg_top=(0.04, 0.012, 0.10), bg_bot
     focal = (w * 0.5) / math.tan(math.radians(16.0))
     D = zoom
 
+    L_KEY = np.array([-0.38, 0.58, 0.72], dtype=np.float32)
+    L_KEY /= np.linalg.norm(L_KEY)
+    H_KEY = L_KEY + np.array([0.0, 0.0, 1.0], dtype=np.float32)
+    H_KEY /= np.linalg.norm(H_KEY)
+    L_RIM1 = np.array([-0.82, 0.25, -0.52], dtype=np.float32)
+    L_RIM1 /= np.linalg.norm(L_RIM1)
+    L_RIM2 = np.array([0.82, 0.30, -0.48], dtype=np.float32)
+    L_RIM2 /= np.linalg.norm(L_RIM2)
+
     proj = []
     for t in tris:
         pv = [xform(p) for p in t["p"]]
@@ -80,37 +89,33 @@ def render_view(tris, yaw, pitch, w, h, zoom, bg_top=(0.04, 0.012, 0.10), bg_bot
         ln = np.linalg.norm(n)
         if ln < 1e-9:
             continue
-        nn = n / ln
+        nn = (n / ln).astype(np.float32)
+        if t.get("vn"):
+            vnv = [np.array(xform(v), dtype=np.float32) for v in t["vn"]]
+            for k in range(3):
+                nl = np.linalg.norm(vnv[k])
+                if nl > 1e-6:
+                    vnv[k] /= nl
+                else:
+                    vnv[k] = nn
+        else:
+            vnv = [nn, nn, nn]
         scr = [(w / 2 + p[0] * focal / d, h / 2 - p[1] * focal / d)
                for p, d in zip(pv, depths)]
         scr = [(sx * s, sy * s) for (sx, sy) in scr]
-        proj.append((t, scr, depths, nn))
+        proj.append((t, scr, depths, nn, vnv))
 
     proj.sort(key=lambda e: -max(e[2]))
 
-    for (t, scr, zs, nn) in proj:
+    for (t, scr, zs, nn, vnv) in proj:
         base = np.array(t["c"], dtype=np.float32)
         emis = np.array(t["e"], dtype=np.float32)
         ei = float(t["ei"] or 0)
         opacity = float(t["o"])
+        rough = float(t.get("r", 0.42))
+        metal = float(t.get("m", 0.28))
         additive = bool(t["ad"])
         basic = bool(t["ba"])
-        if additive or opacity <= 0.02:
-            # additive glows: draw as soft halo, skip precise depth
-            pass
-        # lighting
-        if basic:
-            shade = np.ones(3, dtype=np.float32)
-        else:
-            L = np.array([-0.42, 0.62, 0.66]); L /= np.linalg.norm(L)
-            nd = max(0.0, float(np.dot(nn, L)))
-            # two-side lighting so back faces are not black
-            nd2 = max(0.0, float(np.dot(-nn, L))) * 0.35
-            fill = 0.42
-            shade = np.clip((nd + nd2) * 0.85 + fill, 0, 1.6) * np.ones(3, dtype=np.float32)
-        col = base * shade + emis * ei
-        if t["tr"] and opacity < 0.98:
-            col = col * opacity
 
         # rasterize
         xs = [p[0] for p in scr]; ys = [p[1] for p in scr]
@@ -126,30 +131,69 @@ def render_view(tris, yaw, pitch, w, h, zoom, bg_top=(0.04, 0.012, 0.10), bg_bot
         w0 = ((bx - ax) * (Y - ay) - (by - ay) * (X - ax)) / area
         w1 = ((cx - bx) * (Y - by) - (cy - by) * (X - bx)) / area
         w2 = 1.0 - w0 - w1
-        # barycentric for the other two verts
         l0 = w1; l1 = w2; l2 = w0
         inside = (l0 >= -1e-6) & (l1 >= -1e-6) & (l2 >= -1e-6)
         if not inside.any():
             continue
-        # perspective-ish depth (1/z interpolation)
         iz0, iz1, iz2 = 1.0 / zs[0], 1.0 / zs[1], 1.0 / zs[2]
         iz = l0 * iz0 + l1 * iz1 + l2 * iz2
         zz = np.where(iz > 1e-6, 1.0 / np.maximum(iz, 1e-6), 1e6)
         sl = (slice(y0, y1 + 1), slice(x0, x1 + 1))
         cur = depth[sl]
         if additive or (opacity < 0.98):
-            m = inside
+            m = inside & (zz <= cur + 0.03)
+            if not m.any():
+                continue
+            col_flat = base + emis * ei
             if additive:
-                if nn[2] <= 0.0:
+                if nn[2] <= 0.0 or opacity <= 0.05:
                     continue
-                img[sl][m] = np.clip(img[sl][m] + col * (min(2.4, opacity * 2.0) if opacity < 1 else 0.5), 0, 1)
+                img[sl][m] = np.clip(img[sl][m] + col_flat * (min(0.8, opacity * 1.2) if opacity < 1 else 0.45), 0, 1)
             else:
-                img[sl][m] = img[sl][m] * (1 - opacity * 0.6) + col * (opacity * 0.6)
+                img[sl][m] = img[sl][m] * (1 - opacity * 0.7) + col_flat * (opacity * 0.7)
             continue
-        better = m = inside & (zz < cur)
+        m = inside & (zz < cur)
         if not m.any():
             continue
-        img[sl][m] = col
+        if basic:
+            pix_col = np.clip(base + emis * ei, 0, 1.4)
+            img[sl][m] = pix_col
+            cur[m] = zz[m]
+            continue
+
+        # Smooth Phong normal interpolation across the triangle
+        w_a = l0[m]; w_b = l1[m]; w_c = l2[m]
+        nx = w_a * vnv[0][0] + w_b * vnv[1][0] + w_c * vnv[2][0]
+        ny = w_a * vnv[0][1] + w_b * vnv[1][1] + w_c * vnv[2][1]
+        nz = w_a * vnv[0][2] + w_b * vnv[1][2] + w_c * vnv[2][2]
+        inv_len = 1.0 / np.maximum(1e-6, np.sqrt(nx * nx + ny * ny + nz * nz))
+        nx *= inv_len; ny *= inv_len; nz *= inv_len
+        # Flip normal if back-facing
+        flip = np.where(nz < -0.15, -1.0, 1.0)
+        nx *= flip; ny *= flip; nz *= flip
+
+        ndl = np.maximum(0.0, nx * L_KEY[0] + ny * L_KEY[1] + nz * L_KEY[2])
+        ndh = np.maximum(0.0, nx * H_KEY[0] + ny * H_KEY[1] + nz * H_KEY[2])
+        rim1 = np.maximum(0.0, nx * L_RIM1[0] + ny * L_RIM1[1] + nz * L_RIM1[2])
+        rim2 = np.maximum(0.0, nx * L_RIM2[0] + ny * L_RIM2[1] + nz * L_RIM2[2])
+        fres = np.power(1.0 - np.clip(np.abs(nz), 0.0, 1.0), 2.4)
+
+        hemi = 0.36 + 0.14 * (0.5 + 0.5 * ny)
+        diff = (hemi + ndl * 0.82) * (1.0 - metal * 0.38)
+        shininess = max(8.0, (1.0 - rough) * 96.0)
+        spec_str = (0.18 + metal * 0.65) * (1.0 - rough * 0.65)
+        spec = np.power(ndh, shininess) * spec_str
+        spec_col = (1.0 - metal * 0.6) * np.ones(3, dtype=np.float32) + metal * 0.6 * base
+
+        rim_col = (rim1[:, None] * np.array([0.36, 0.91, 1.0], dtype=np.float32) * 0.28 +
+                   rim2[:, None] * np.array([1.0, 0.37, 0.82], dtype=np.float32) * 0.24 +
+                   fres[:, None] * np.array([0.72, 0.86, 1.0], dtype=np.float32) * 0.22)
+
+        lit = ( diff[:, None] * base[None, :] +
+                spec[:, None] * spec_col[None, :] +
+                rim_col * (0.35 + 0.65 * base[None, :]) +
+                (emis * ei)[None, :] )
+        img[sl][m] = np.clip(lit, 0, 1.0)
         cur[m] = zz[m]
 
     # downsample (box filter)

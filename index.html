@@ -882,6 +882,8 @@ function buildFighter(d,scale){
     });
     const hem=new THREE.Mesh(new THREE.BoxGeometry(.30,.075,.20),WHT);
     hem.position.set(0,1.28,.30); g.add(hem);
+    const hemGlow=new THREE.Mesh(new THREE.TorusGeometry(.325,.014,6,22),ACCM);
+    hemGlow.rotation.x=Math.PI/2; hemGlow.position.y=1.13; hemGlow.scale.set(1,.92,1); g.add(hemGlow);
 
     /* ---- cargo shorts, thigh pouches, knee pad, leggings, chunky sneakers ---- */
     const shorts=new THREE.Mesh(new THREE.CylinderGeometry(.375,.415,.54,16),CRGO);
@@ -907,6 +909,8 @@ function buildFighter(d,scale){
       up.position.set(0,-(PR.legL+PR.footH*.20),.085); legs[sx>0?1:0].add(up);
       const lace=new THREE.Mesh(new THREE.BoxGeometry(.10,.028,.19),mat(0x55555f,0x202028,.2));
       lace.position.set(0,-(PR.legL+PR.footH*.02),.075); legs[sx>0?1:0].add(lace);
+      const swoosh=new THREE.Mesh(new THREE.BoxGeometry(.025,.045,.34),ACCM);
+      swoosh.position.set(.125*sx,-(PR.legL+PR.footH*.30),.05); legs[sx>0?1:0].add(swoosh);
       const heel=new THREE.Mesh(new THREE.BoxGeometry(.20,.10,.10),SOLE);
       heel.position.set(0,-(PR.legL+PR.footH*.70),-.10); legs[sx>0?1:0].add(heel);
     });
@@ -916,6 +920,8 @@ function buildFighter(d,scale){
     [-1,1].forEach(sx=>{
       const cuff=new THREE.Mesh(new THREE.CylinderGeometry(.125,.115,.09,12),GLOV);
       cuff.position.y=-PR.armL*.94; arms[sx>0?1:0].add(cuff);
+      const stripe=new THREE.Mesh(new THREE.BoxGeometry(.055,.30,.020),ACCM);
+      stripe.position.set(.085*sx,-PR.armL*.44,-.010); stripe.rotation.y=sx*.35; arms[sx>0?1:0].add(stripe);
     });
 
     /* ---- shoulders get the hoodie's white sleeves, already from P.limb ---- */

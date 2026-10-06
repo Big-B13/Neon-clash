@@ -127,17 +127,25 @@ __collect = function (root) {
                      spin: o.rotation.z });
       return;
     }
-    const pos = g.attributes.position, idx = g.index, n = idx ? idx.count : pos.count;
+    const pos = g.attributes.position, nrm = g.attributes.normal, idx = g.index, n = idx ? idx.count : pos.count;
+    const nm = new THREE.Matrix3().getNormalMatrix(o.matrixWorld);
     const col = m && m.color ? [m.color.r, m.color.g, m.color.b] : [1,1,1];
     const emi = m && m.emissive ? [m.emissive.r, m.emissive.g, m.emissive.b] : [0,0,0];
+    const rough = (m && m.roughness !== undefined) ? m.roughness : 0.45;
+    const metal = (m && m.metalness !== undefined) ? m.metalness : 0.25;
     for (let i = 0; i < n; i += 3) {
-      const t = [];
+      const t = [], vn = [];
       for (let k = 0; k < 3; k++) {
         const vi = idx ? idx.getX(i + k) : (i + k);
         p.set(pos.getX(vi), pos.getY(vi), pos.getZ(vi)).applyMatrix4(o.matrixWorld);
         t.push([p.x, p.y, p.z]);
+        if (nrm) {
+          const nv = new THREE.Vector3(nrm.getX(vi), nrm.getY(vi), nrm.getZ(vi)).applyMatrix3(nm).normalize();
+          vn.push([nv.x, nv.y, nv.z]);
+        }
       }
-      tris.push({ p: t, c: col, e: emi,
+      tris.push({ p: t, vn: vn.length === 3 ? vn : null, c: col, e: emi,
+        r: rough, m: metal,
         ei: (m && m.emissiveIntensity !== undefined) ? m.emissiveIntensity : 0,
         o: (m && m.opacity !== undefined) ? m.opacity : 1,
         tr: !!(m && m.transparent), ad: !!(m && m.blending === THREE.AdditiveBlending),
@@ -198,16 +206,21 @@ const shots = [];
 function shot(name, label, setup, framesToPeak, prep, close) {
   G(STAGE_SETUP);
   if (prep) G(prep);
-  if (close && close.solo) {
+  if (close && close.solo === true) {
     G(`players[1].x=1180;players[1].y=548;players[1].face=-1;`);   // out of the shot
     G(`players[0].face=1;`);
   }
   step(3);
   if (setup) { setup(); }
   step(framesToPeak);
+  if (close && close.solo === 'after') {
+    G(`players[1].x=1180;players[1].y=548;players[1].model.visible=false;`);
+  }
   if (close) {                                   // cinematic close-up of the hero
     const hx = G('players[0].wx'), hy = G('players[0].wy');   // world: feet on the deck
-    G(`__heroCam(${hx}, ${(hy + 1.15).toFixed(2)}, ${close.dist || 6}, ${(hy + 1.95).toFixed(2)}, ${close.side === undefined ? 1.5 : close.side})`);
+    const cd = close.dist || 6;
+    const side = close.side === undefined ? cd * 0.92 : close.side;   // 3/4 view of the face
+    G(`__heroCam(${hx}, ${(hy + 1.28).toFixed(2)}, ${cd}, ${(hy + 1.75).toFixed(2)}, ${side.toFixed(2)})`);
     G('players[0].model.userData.aura.material.opacity=0.02; players[0].model.userData.disc.material.opacity=0.10;');
     if (close.clean !== false) {
       G(`sun.visible=false; skyline.visible=false; shards.visible=false; horizonGlow.visible=false;
@@ -231,20 +244,20 @@ function shot(name, label, setup, framesToPeak, prep, close) {
 shot('faceoff', 'IN-GAME — FACE-OFF', null, 46);
 
 /* portraits: Kage alone, facing camera */
-shot('portrait-idle', 'BIG-B — IDLE', null, 40, null, { dist: 5.6, side: 1.1, solo: true });
+shot('portrait-idle', 'BIG-B — IDLE', null, 40, null, { dist: 4.7, solo: true });
 shot('portrait-run', 'BIG-B — RUNNING', () => { key('d', 'keydown'); }, 30,
-     null, { dist: 5.8, side: 1.0, solo: true });
+     null, { dist: 5.2, side: 2.6, solo: true });
 G("keys['d']=false;");
-shot('portrait-jab', 'BIG-B — KATANA JAB', () => { tap('f'); }, 6, null, { dist: 5.4, side: 0.9, solo: true });
-shot('portrait-trick', 'BIG-B — TRICK SHOT', () => { tap('g'); }, 5, null, { dist: 5.2, side: 0.8, solo: true });
+shot('portrait-jab', 'BIG-B — KATANA JAB', () => { tap('f'); }, 6, null, { dist: 5.0, solo: true });
+shot('portrait-trick', 'BIG-B — TRICK SHOT', () => { tap('g'); }, 5, null, { dist: 4.4, solo: true });
 shot('portrait-blink', 'BIG-B — BLINK FANG', () => { key('w', 'keydown'); tap('g'); schedule(4, () => key('w', 'keyup')); }, 7,
-     null, { dist: 5.8, side: 1.2, solo: true });
+     null, { dist: 5.0, side: -4.6, solo: 'after' });
 shot('portrait-ultimate', 'BIG-B — FINAL SMASH', () => { G('players[0].ko=100;'); step(2); tap('g'); }, 20,
-     null, { dist: 5.6, side: 1.1, solo: true });
+     null, { dist: 5.0, solo: true });
 shot('air-jump', 'AIR — SASH + BLADE', () => {
   G('players[0].x=470;players[0].y=430;players[0].onGround=false;players[0].vy=-2;players[0].jumpsLeft=1;');
   tap('f');
-}, 7, null, { dist: 6.0, side: 1.2, solo: true });
+}, 7, null, { dist: 5.4, side: 3.0, solo: true });
 
 const out = { shots, size: { w: Number(process.env.W || 1000), h: Number(process.env.H || 620) } };
 fs.writeFileSync(OUT, JSON.stringify(out));

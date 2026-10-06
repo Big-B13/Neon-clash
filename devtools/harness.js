@@ -248,5 +248,74 @@ if (plan === 'kit') {
   process.exit(0);
 }
 
+
+/* ---------- KAGE.EXE signature-move test ---------- */
+if (plan === 'kage') {
+  const K = G('ROSTER.findIndex(r=>r.id==="kage")');
+  G(`mode='2p';selCursor=[${K},${K===0?1:0}];startMatch();`);
+  step(3);
+  G('countT=0;');
+  const setup = `players[0].x=600;players[0].y=548;players[0].face=1;players[0].invuln=0;players[0].vx=0;players[0].vy=0;
+                 players[1].x=760;players[1].y=548;players[1].face=-1;players[1].invuln=0;players[1].vx=0;players[1].vy=0;
+                 players[0].ko=0;players[0].attack=null;players[0].cool=0;players[0].gunT=0;
+                 players[0].percent=0;players[1].percent=0;players[1].hitstun=0;
+                 players[1].vx=0;players[1].vy=0;players[1].x=760;players[1].y=548;`;
+  const lock = () => G('players.forEach(p=>{p.cpu=false;});');
+
+  // --- TRICK SHOT: twin revolvers, 360 spin, two shots ---
+  G(setup); lock(); step(3);
+  const pBefore = G('projectiles.length');
+  key('g','keydown'); step(3); key('g','keyup');
+  let peakProj = 0, peakSpin = 0, foeHit = 0, peakGuns = 0, katHid = false;
+  for (let f = 0; f < 40; f++) {
+    step(1);
+    peakProj = Math.max(peakProj, G('projectiles.length'));
+    peakSpin = Math.max(peakSpin, G('players[0].spin360||0'));
+    foeHit = Math.max(foeHit, G('players[1].percent'));
+    peakGuns = Math.max(peakGuns, G('players[0].model.userData.W.guns.filter(g=>g.visible).length'));
+    if (G('!players[0].model.userData.W.katana.visible')) katHid = true;
+  }
+  const gunsVisible = peakGuns;
+  const katHidden = katHid;
+  console.log(`TRICK SHOT   gunsVisible=${gunsVisible}/2  katanaHidden=${!katHidden}  peakProjectiles=${peakProj - pBefore}  spinFrames=${peakSpin}  foeDamage=${Math.round(foeHit)}%`);
+
+  // --- BLINK FANG: must reappear behind the opponent ---
+  G(setup); lock();
+  G('players[1].x=800;players[1].face=-1;'); step(2);
+  const bx = G('players[0].x');
+  key('w','keydown'); key('g','keydown'); step(3); key('w','keyup'); key('g','keyup'); step(2);
+  const ax = G('players[0].x'), facing = G('players[0].face');
+  const behind = ax > 800;                      // foe faces -1, so behind them is +x
+  const facesFoe = facing === -1;               // and he should be turned back toward them
+  console.log(`BLINK FANG   from=${Math.round(bx)} to=${Math.round(ax)} (foe at 800)  landedBehind=${behind}  facingFoe=${facesFoe}`);
+
+  // --- FINAL SMASH: meter full + G ---
+  G(setup); lock();
+  G('players[0].ko=100;'); step(2);
+  const koBefore = G('players[0].ko');
+  key('g','keydown'); step(3); key('g','keyup'); step(2);
+  let koPeak = 0;
+  const kind = G('players[0].attack ? players[0].attack.kind : "none"');
+  const isKo = G('players[0].attack ? !!players[0].attack.data.koPunch : false');
+  const koAfter = G('players[0].ko');
+  for (let f = 0; f < 140; f++) { step(1); koPeak = Math.max(koPeak, G('players[1].percent')); }
+  console.log(`FINAL SMASH  meter ${koBefore}->${koAfter}  attack=${kind}  flaggedFinalSmash=${isKo}  foeDamage=${Math.round(koPeak)}%`);
+
+  // --- blade arcs + sash exist ---
+  console.log(`MODEL        sashRibbons=${G('players[0].model.userData.W.sash.length')}  ledMaterial=${G('!!players[0].model.userData.W.ledMat')}  hexShield=${G('players[0].model.userData.shield.geometry.type')}`);
+
+  // --- full CPU match with KAGE in both slots ---
+  G(setup);
+  G('players.forEach(p=>{p.cpu=true;p.spdMul=0.85;}); players[0].ko=0;');
+  let done = null;
+  for (let f = 0; f < 9000; f++) {
+    step(1);
+    if (G('sceneName') === 'results') { done = G('winner? winner.d.name : null'); report.frames = f; break; }
+  }
+  console.log(`FULL MATCH   winner=${done}  frames=${report.frames}  errors=${errors.length}`);
+  if (errors.length) console.log(errors.slice(0, 8).join('\n'));
+  process.exit(0);
+}
+
 report.errors = errors.slice(0, 30);
 console.log(JSON.stringify(report, null, 2));

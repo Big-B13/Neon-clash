@@ -123,24 +123,61 @@ const SCHEMES=[
    move-type surface is playable while the final cast is written.
    ───────────────────────────────────────────────────────────── */
 const ROSTER=[
- {id:'bigb',name:'BIG-B',tag:'SUPER HEAVY  /  POWERHOUSE',build:'bigb',main:true,
-  c1:0xff2f7f,c2:0x2a1458,glow:'#ff5ea8',
-  skin:0xb0764c,jacket:0xff2f7f,jacket2:0x1c0f42,trim:0x5ce9ff,visor:0x5ce9ff,
-  glove:0x2b1a55,boot:0x1a1040,belt:0xffd34d,hairc:0x160c26,
-  w:58,h:96,
-  weight:1.30,speed:4.2,accel:.70,jump:13.6,jumps:2,grav:.70,fall:15.5,
-  heavy:true,
-  blurb:'Loud, enormous, and built like a speaker stack. Charges through anything, lands the hardest single hits in the game, and rockets back on stage.',
-  koLabel:'B-BREAKER',
-  ko:{dmg:27,base:18.5,scale:.150,ang:-0.12,reach:118,hh:50,oy:-12,start:8,active:7,end:32},
-  atk:{jab:{dmg:4.2,base:4.0,scale:.045,ang:-0.28,reach:64,hh:34,oy:-8,start:4,active:4,end:8},
-       side:{dmg:17.5,base:10.4,scale:.120,ang:-0.30,reach:110,hh:48,oy:-12,start:15,active:6,end:26},
-       up:{dmg:13.0,base:10.0,scale:.102,ang:-1.46,reach:58,hh:88,oy:-60,start:8,active:7,end:19},
-       down:{dmg:12.5,base:7.0,scale:.086,ang:0.95,reach:78,hh:50,oy:30,start:10,active:7,end:22}},
-  special:{type:'melee',name:'B-CHARGE',dmg:15.5,base:9.8,scale:.112,ang:-0.16,
-           reach:104,hh:60,oy:-16,start:9,active:5,end:26,cd:44,dash:true,dashT:24,lunge:6.4},
-  upb:{name:'ROCKET UPPERCUT',vy:-15.6,vx:2.6,dmg:9.5,base:9.0,scale:.068,ang:-1.34,
-       reach:56,hh:86,oy:-60,start:2,active:12,end:16,rocket:true}},
+ {id:'kage',name:'KAGE.EXE',tag:'CYBER COWBOY NINJA  ·  BIG-B',build:'kage',main:true,
+  /* ── default palette: black on white, amber LED, cyan blade ── */
+  c1:0x5ce9ff,c2:0x14141a,glow:'#7ef0ff',
+  hat:0x131318,hatband:0x2a2a34,hood:0xf2f4f8,
+  vest:0x16161c,vest2:0x202028,shirt:0xf2f4f8,tie:0x11111a,
+  cargo:0x191921,legging:0x101018,sole:0xffffff,sneaker:0x1a1a22,
+  skin:0x8a5a3c,glove:0x14141a,metal:0xc8d4e0,handle:0x101018,
+  led:0xffa62b,accent:0x5ce9ff,bladeGlow:0x9ff2ff,visor:0xffa62b,
+  w:48,h:88,
+  weight:0.95,speed:5.9,accel:1.05,jump:14.8,jumps:2,grav:.70,fall:15.5,
+  sword:true,gun:true,shieldHex:true,ghosts:true,longArcs:true,arcColor:'#9ff2ff',
+  blurb:'Big-B’s flagship. Blade on the right, revolvers on the left: blink behind them, cut, and shoot on the way out. Fastest hands, scariest recovery.',
+  koLabel:'FINAL SMASH',koReady:'★ ULTIMATE READY ★',
+  /* ── alternate palettes from the KAGE.EXE pack (cycle with C on select) ── */
+  alts:[
+   {name:'DEFAULT',c:{}},
+   {name:'ONI CRIMSON',c:{glow:'#ff4d3b',led:0xff2b1e,accent:0xff3b30,visor:0xff3b30,bladeGlow:0xff9c8a,
+     hat:0x170a0a,hatband:0x3a1212,vest:0x2a0c0c,vest2:0x3d1414,hood:0xd9d2d2,shirt:0xd9d2d2,tie:0x150707,
+     cargo:0x2a0c0c,legging:0x150707,sneaker:0x170a0a,glove:0x150707,sole:0xf0e8e8,skin:0x2a1414,
+     metal:0xd8c0c0,c1:0xff3b30,c2:0x2a0c0c}},
+   {name:'GHOST PROTOCOL',c:{glow:'#dff2ff',led:0xe8f6ff,accent:0x9fd8ff,visor:0xdff2ff,bladeGlow:0xffffff,
+     hat:0xd6dbe4,hatband:0xb4bcc8,vest:0xc6ccd6,vest2:0xb4bcc8,hood:0xeef2f8,shirt:0xeef2f8,tie:0xa8b2c0,
+     cargo:0xc6ccd6,legging:0xa6aeba,sneaker:0xd6dbe4,glove:0xb4bcc8,sole:0xffffff,skin:0x2a2a30,
+     metal:0xf0f6ff,c1:0xdff2ff,c2:0xa6aeba}},
+   {name:'ACID MATRIX',c:{glow:'#8dff5a',led:0xa8ff6a,accent:0x6cff3d,visor:0xa8ff6a,bladeGlow:0xd8ffb0,
+     hat:0x0b1208,hatband:0x1e2a12,vest:0x0f1a0c,vest2:0x1b2a12,hood:0x101a0c,shirt:0x101a0c,tie:0x0a1206,
+     cargo:0x16220f,legging:0x0b1208,sneaker:0x101a0c,glove:0x0b1208,sole:0x1e2a12,skin:0x1a2a12,
+     metal:0xc8d8b0,c1:0x6cff3d,c2:0x0f1a0c}},
+   {name:'BLOOD MOON',c:{glow:'#ff2b3b',led:0xff2334,accent:0xff3b52,visor:0xff2334,bladeGlow:0xff9aa8,
+     hat:0x241013,hatband:0x3d1a20,vest:0x3a1218,vest2:0x4d1a22,hood:0x6b2b33,shirt:0x6b2b33,tie:0x1a0a0d,
+     cargo:0x3a1218,legging:0x1e0c10,sneaker:0x241013,glove:0x1e0c10,sole:0x2a1418,skin:0x2a1414,
+     metal:0xd8aab0,c1:0xff2b3b,c2:0x3a1218}},
+   {name:'STATIC GLITCH',c:{glow:'#5ce9ff',led:0x7dffe8,accent:0xff5fd2,visor:0x7dffe8,bladeGlow:0x9ff2ff,
+     hat:0x0d2a2e,hatband:0x2a0d24,vest:0x0a3a3a,vest2:0x8a1a5a,hood:0x0f3d3d,shirt:0x0f3d3d,tie:0x120a18,
+     cargo:0x0a3a3a,legging:0x08222a,sneaker:0x0d2a2e,glove:0x08222a,sole:0xff5fd2,skin:0x1a2a2a,
+     metal:0xa8f0ff,c1:0x5ce9ff,c2:0x0a3a3a}},
+   {name:'PROTOTYPE ZERO',c:{glow:'#c8d0dc',led:0xe8eef6,accent:0xffb347,visor:0xe8eef6,bladeGlow:0xffffff,
+     hat:0x8f949c,hatband:0x6e737a,vest:0x9aa0a8,vest2:0x7d828a,hood:0xa8aeb6,shirt:0xa8aeb6,tie:0x6e737a,
+     cargo:0x9aa0a8,legging:0x63686f,sneaker:0x8f949c,glove:0x7d828a,sole:0xb8bec6,skin:0x6e737a,
+     metal:0xd8dee6,c1:0xc8d0dc,c2:0x9aa0a8}}
+  ],
+
+  ko:{dmg:26,base:18.0,scale:.148,ang:-0.16,reach:126,hh:64,oy:-14,start:10,active:7,end:34,
+      finalSmash:true,glitch:true},
+  atk:{jab:{dmg:3.8,base:3.8,scale:.042,ang:-0.26,reach:78,hh:36,oy:-10,start:3,active:4,end:6,katana:true},
+       side:{dmg:13.0,base:9.0,scale:.105,ang:-0.22,reach:138,hh:58,oy:-12,start:11,active:6,end:24,
+             katana:true,ringAir:true},
+       up:{dmg:11.0,base:9.2,scale:.096,ang:-1.44,reach:76,hh:104,oy:-62,start:8,active:6,end:18,katana:true,vert:true},
+       down:{dmg:12.5,base:7.0,scale:.086,ang:1.05,reach:80,hh:56,oy:28,start:10,active:6,end:21,
+             katana:true,plunge:true,slide:true}},
+  special:{type:'projectile',name:'TRICK SHOT',dmg:4.2,base:4.6,scale:.040,ang:-0.14,speed:19,
+           life:46,r:8,grav:0,cd:38,color:0xffd34d,trail:'#ffe9a8',dual:true,shots:2,muzzle:true,
+           reverse:true},
+  upb:{name:'BLINK FANG',vy:-16.2,vx:3.4,dmg:7.5,base:8.4,scale:.062,ang:-1.30,
+       reach:74,hh:70,oy:-46,start:2,active:10,end:18,blink:true,crescent:true}},
 
  {id:'vector',name:'VECTOR',tag:'SWORD  /  ZONER',build:'vector',placeholder:true,
   c1:0x3df08a,c2:0x0f6b46,glow:'#7dffb0',
@@ -406,7 +443,7 @@ function buildFighter(d,scale){
   if(B==='samus'){    P.body=d.armor; P.limb=d.armor2;P.dark=d.armor;   P.foot=d.armor2;P.head=d.armor;}
   if(B==='greninja'){ P.body=d.body;  P.limb=d.body;  P.dark=d.body;    P.foot=d.body;  P.head=d.body; }
   if(B==='kirby'){    P.body=d.pink;  P.limb=d.pink;  P.dark=d.pink;    P.foot=d.feet;  P.head=d.pink; }
-  if(B==='bigb'){     P.body=d.jacket;P.limb=d.skin;  P.dark=d.jacket2; P.foot=d.boot;  P.head=d.skin; }
+  if(B==='kage'){     P.body=d.hood;  P.limb=d.hood;  P.dark=d.cargo;   P.foot=d.sneaker; P.head=d.skin; }
   if(B==='vector'){   P.body=d.body;  P.limb=d.body;  P.dark=d.body2;   P.foot=d.body2; P.head=d.body; }
   if(B==='pulse'){    P.body=d.armor; P.limb=d.armor2;P.dark=d.armor;   P.foot=d.armor2;P.head=d.armor;}
   if(B==='blip'){     P.body=d.pink;  P.limb=d.pink;  P.dark=d.pink;    P.foot=d.feet;  P.head=d.pink; }
@@ -416,7 +453,7 @@ function buildFighter(d,scale){
         footMat=mat(P.foot,SH,.10), headMat=mat(P.head,SH,.10),
         white=mat(0xf4f8ff,0x222222,.08), metal=new THREE.MeshStandardMaterial(
           {color:0xd8e6f2,roughness:.22,metalness:.9,emissive:0x101820,emissiveIntensity:.1});
-  const bulk = B==='bigb'?1.42 : B==='samus'?1.18 : B==='pulse'?1.14 : B==='link'?1.04 : B==='vector'?1.0 : B==='mac'?1 : B==='greninja'?.98 : 1;
+  const bulk = B==='kage'?.97 : B==='bigb'?1.42 : B==='samus'?1.18 : B==='pulse'?1.14 : B==='link'?1.04 : B==='vector'?1.0 : B==='mac'?1 : B==='greninja'?.98 : 1;
   const arms=[],legs=[],fists=[]; let torso,head,visor,chest;
 
   if(B==='kirby'||B==='blip'){                         // ---------- round one-piece body ----------
@@ -452,6 +489,9 @@ function buildFighter(d,scale){
                 armX:.44,armY:1.64,armR:.12,armL:.5,fistR:.17,legX:.2,legY:.86,legR:.14,legL:.52,
                 footW:.3,footH:.18,footD:.46,footZ:.07,visorW:.3,visorH:.08,visorD:.1};
     const PROP={
+      kage:  {torsoR:.325,torsoL:.76,torsoY:1.28,headR:.285,headY:1.99,
+              armX:.42,armY:1.68,armR:.095,armL:.54,fistR:.15,legX:.185,legY:.88,legR:.125,legL:.56,
+              footW:.28,footH:.16,footD:.44,footZ:.06,visorW:0,visorH:0,visorD:0},
       bigb:  {torsoR:.50,torsoL:.62,torsoY:1.24,headR:.30,headY:2.00,
               armX:.60,armY:1.62,armR:.155,armL:.46,fistR:.235,legX:.27,legY:.84,legR:.185,legL:.50,
               footW:.40,footH:.24,footD:.60,footZ:.09,visorW:.40,visorH:.12,visorD:.12},
@@ -473,12 +513,16 @@ function buildFighter(d,scale){
     chest.position.set(0,PR.torsoY+.16,.3*bulk); chest.visible=false; g.add(chest);
     head=new THREE.Mesh(new THREE.SphereGeometry(PR.headR,18,14),headMat);
     head.position.y=PR.headY; g.add(head);
-    const visorMat=(B==='bigb'||B==='vector'||B==='pulse')
+    const visorMat=(B==='bigb'||B==='kage'||B==='vector'||B==='pulse')
       ? new THREE.MeshStandardMaterial({color:d.visor,emissive:d.visor,emissiveIntensity:1.15,
           roughness:.2,metalness:.5})
       : white;
     visor=new THREE.Mesh(new THREE.BoxGeometry(PR.visorW*(B==='bigb'?1.05:bulk),PR.visorH,PR.visorD),visorMat);
     visor.position.set(0,PR.headY+.03,PR.headR*.96); g.add(visor);
+    if(B==='kage'){
+      visor.visible=false;                        // LED mask replaces the plain visor bar
+      head.material=mat(0x14141a,0x000000,.03);   // balaclava: no bare skin
+    }
 
     [-1,1].forEach(sx=>{
       const pivot=new THREE.Group(); pivot.position.set(PR.armX*sx,PR.armY,0);
@@ -661,6 +705,195 @@ function buildFighter(d,scale){
     grill.position.set(0,1.9,.36); g.add(grill);
   }
 
+  // ---------------- KAGE.EXE: cyber cowboy ninja (Big-B's flagship) ----------------
+  if(B==='kage'){
+    const LEDM=new THREE.MeshBasicMaterial({color:d.led,toneMapped:false});
+    W.ledMat=LEDM; W.ledBase=new THREE.Color(d.led);
+    const ACCM=new THREE.MeshBasicMaterial({color:d.accent,toneMapped:false,transparent:true,opacity:.95});
+    const HATM=mat(d.hat,0x000000,.05), BAND=mat(d.hatband,d.accent,.30);
+    const VEST=mat(d.vest,0x000000,.05), VEST2=mat(d.vest2,0x000000,.05);
+    const WHT=mat(d.shirt,0x101018,.10), CRGO=mat(d.cargo,0x000000,.05);
+    const LEGG=mat(d.legging,0x000000,.04), SNKR=mat(d.sneaker,0x000000,.05);
+    const SOLE=mat(d.sole,0x303038,.08), GLOV=mat(d.glove,0x000000,.05);
+
+    /* ---- everything on the head rides along when he looks around ---- */
+    const F=new THREE.Group(); head.add(F);
+    const cf=(color,ei)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:ei===undefined?.9:ei,
+      roughness:.3,metalness:.35});
+    // bandana over the lower face
+    const band=new THREE.Mesh(new THREE.SphereGeometry(.295,16,12,0,Math.PI*2,Math.PI*.52,Math.PI*.48),HATM);
+    band.scale.set(1.02,1,1.02); band.position.y=-.01; F.add(band);
+    // dark LED panel across the face
+    const panel=new THREE.Mesh(new THREE.BoxGeometry(.345,.32,.035),mat(0x08080c,0x000000,.02));
+    panel.position.set(0,.00,.272); panel.rotation.x=-.06; F.add(panel);
+    // glowing ring eyes
+    W.eyes=[];
+    [-1,1].forEach(sx=>{
+      const ring=new THREE.Mesh(new THREE.TorusGeometry(.058,.017,8,18),LEDM);
+      ring.position.set(.085*sx,.085,.315); ring.rotation.x=-.06; F.add(ring); W.eyes.push(ring);
+    });
+    // pixel-dot grin: two rows following a smile curve
+    W.grin=[];
+    for(let row=0;row<3;row++){
+      const n=[10,8,5][row];
+      for(let i=0;i<n;i++){
+        const t=(i-(n-1)/2)/((n-1)/2||1);
+        const px=t*(.175-row*.022);
+        const py=-.075-row*.055-(1-Math.abs(t))*.055;      // smile curve
+        const dot=new THREE.Mesh(new THREE.BoxGeometry(.032,.032,.018),LEDM);
+        dot.position.set(px,py,.317); F.add(dot); W.grin.push(dot);
+      }
+    }
+    // cowboy hat: wide brim + crown + band + bull emblem
+    const hat=new THREE.Group(); hat.rotation.z=.05; F.add(hat);
+    const brim=new THREE.Mesh(new THREE.CylinderGeometry(.60,.66,.045,22),HATM);
+    brim.position.y=.31; hat.add(brim);
+    const crown=new THREE.Mesh(new THREE.CylinderGeometry(.295,.355,.35,18),HATM);
+    crown.position.y=.475; hat.add(crown);
+    const top=new THREE.Mesh(new THREE.CylinderGeometry(.27,.30,.06,18),HATM);
+    top.position.y=.645; hat.add(top);
+    const hb=new THREE.Mesh(new THREE.CylinderGeometry(.362,.362,.07,18),BAND);
+    hb.position.y=.385; hat.add(hb);
+    // little bull-skull emblem front-centre
+    const skull=new THREE.Mesh(new THREE.BoxGeometry(.1,.09,.03),mat(0xd8d4c0,0x201810,.30));
+    skull.position.set(0,.40,.345); hat.add(skull);
+    [-1,1].forEach(sx=>{
+      const horn=new THREE.Mesh(new THREE.ConeGeometry(.028,.09,6),mat(0xd8d4c0,0x201810,.30));
+      horn.position.set(.075*sx,.435,.345); horn.rotation.z=-sx*.9; hat.add(horn);
+    });
+
+    /* ---- hood down on the back ---- */
+    const hood=new THREE.Mesh(new THREE.SphereGeometry(.35,16,12,0,Math.PI*2,0,Math.PI*.55),WHT);
+    hood.position.set(0,1.82,-.26); hood.rotation.x=1.35; hood.scale.set(1.20,.85,1.05); g.add(hood);
+    const hoodLip=new THREE.Mesh(new THREE.TorusGeometry(.30,.055,8,18),WHT);
+    hoodLip.position.set(0,1.90,-.14); hoodLip.rotation.x=.42; g.add(hoodLip);
+
+    /* ---- black tactical vest over the hoodie ---- */
+    const vest=new THREE.Mesh(new THREE.CylinderGeometry(.365,.33,.78,16),VEST);
+    vest.position.y=1.38; g.add(vest);
+    const lapel=new THREE.Mesh(new THREE.BoxGeometry(.42,.36,.10),VEST2);
+    lapel.position.set(0,1.58,.385); g.add(lapel);
+    const collar=new THREE.Mesh(new THREE.BoxGeometry(.44,.10,.34),VEST2);
+    collar.position.y=1.755; g.add(collar);
+    [-1,1].forEach(sx=>{                                   // vest pouches + buckles
+      const pouch=new THREE.Mesh(new THREE.BoxGeometry(.17,.21,.08),VEST2);
+      pouch.position.set(.20*sx,1.38,.395); g.add(pouch);
+      const buck=new THREE.Mesh(new THREE.BoxGeometry(.07,.035,.02),mat(0x9aa6b4,0x202028,.4));
+      buck.position.set(.20*sx,1.465,.44); g.add(buck);
+      const strap=new THREE.Mesh(new THREE.BoxGeometry(.055,.64,.055),VEST2);
+      strap.position.set(.305*sx,1.52,.31); g.add(strap);
+      [-1,1].forEach(sy=>{ const bt=new THREE.Mesh(new THREE.SphereGeometry(.024,8,6),mat(0x8f9aa8,0x101018,.3));
+        bt.position.set(.055*sx,1.50+sy*.15,.425); g.add(bt); });
+    });
+    // black tie + white shirt tails
+    const tie=new THREE.Mesh(new THREE.BoxGeometry(.08,.30,.04),mat(d.tie,0x000000,.04));
+    tie.position.set(0,1.72,.44); g.add(tie);
+    const knot=new THREE.Mesh(new THREE.BoxGeometry(.115,.095,.05),mat(d.tie,0x000000,.04));
+    knot.position.set(0,1.885,.415); g.add(knot);
+    // just a sliver of white shirt cuff showing under the vest hem
+    [-1,1].forEach(sx=>{
+      const tail=new THREE.Mesh(new THREE.BoxGeometry(.115,.17,.045),WHT);
+      tail.position.set(.115*sx,1.135,.395); tail.rotation.z=-sx*.30; g.add(tail);
+    });
+    const hem=new THREE.Mesh(new THREE.BoxGeometry(.30,.075,.20),WHT);
+    hem.position.set(0,1.20,.30); g.add(hem);
+
+    /* ---- cargo shorts, thigh pouches, knee pad, leggings, chunky sneakers ---- */
+    const shorts=new THREE.Mesh(new THREE.CylinderGeometry(.40,.44,.52,16),CRGO);
+    shorts.position.y=1.00; g.add(shorts);
+    [-1,1].forEach(sx=>{
+      const rig=new THREE.Mesh(new THREE.BoxGeometry(.17,.30,.16),CRGO);
+      rig.position.set(.30*sx,.94,.06); g.add(rig);
+      const pch=new THREE.Mesh(new THREE.BoxGeometry(.13,.16,.09),VEST2);
+      pch.position.set(.31*sx,.90,.15); g.add(pch);
+      const str=new THREE.Mesh(new THREE.BoxGeometry(.36,.04,.04),VEST2);
+      str.position.set(.24*sx,.80,.14); g.add(str);
+    });
+    // knee pad with the little ring detail (right leg, as in the refs)
+    const knee=new THREE.Mesh(new THREE.SphereGeometry(.145,12,10),mat(0x23232c,0x000000,.05));
+    knee.scale.set(1,.9,1.1); knee.position.set(-.185,.50,.10); legs[0].add(knee);
+    const kring=new THREE.Mesh(new THREE.TorusGeometry(.085,.014,6,14),mat(0x9aa6b4,0x202028,.35));
+    kring.position.set(-.185,.44,.16); kring.rotation.x=.3; legs[0].add(kring);
+    // chunky sneakers with white soles
+    [-1,1].forEach(sx=>{
+      const sole=new THREE.Mesh(new THREE.BoxGeometry(.30,.09,.50),SOLE);
+      sole.position.set(0,-1.045,.11); legs[sx>0?1:0].add(sole);
+      const up=new THREE.Mesh(new THREE.BoxGeometry(.26,.16,.44),SNKR);
+      up.position.set(0,-.94,.08); legs[sx>0?1:0].add(up);
+      const lace=new THREE.Mesh(new THREE.BoxGeometry(.11,.03,.20),mat(0x55555f,0x202028,.2));
+      lace.position.set(0,-.87,.06); legs[sx>0?1:0].add(lace);
+    });
+
+    /* ---- fingerless gloves ---- */
+    fists.forEach(f=>{ f.material=GLOV; f.scale.set(1.08,.92,1.08); });
+    [-1,1].forEach(sx=>{
+      const cuff=new THREE.Mesh(new THREE.CylinderGeometry(.125,.115,.09,12),GLOV);
+      cuff.position.y=-.50; arms[sx>0?1:0].add(cuff);
+    });
+
+    /* ---- shoulders get the hoodie's white sleeves, already from P.limb ---- */
+
+    /* ---- the sash: four long ribbons that stream behind him ---- */
+    W.sash=[];
+    const sashRoot=new THREE.Group(); sashRoot.position.set(0,1.16,-.34); g.add(sashRoot);
+    for(let i=0;i<4;i++){
+      const r=new THREE.Mesh(new THREE.BoxGeometry(.13,1.05,.028),mat(0x121218,0x000000,.05));
+      r.position.set((i-1.5)*.085,-.50-(i%2)*.13,-.02*i);
+      r.rotation.z=(i-1.5)*.12; r.rotation.x=-.22-i*.05;
+      sashRoot.add(r); W.sash.push(r);
+    }
+    W.sashRoot=sashRoot;
+
+    /* ---- katana in the right hand ---- */
+    const kat=new THREE.Group();
+    const blade=new THREE.Mesh(new THREE.BoxGeometry(.075,1.68,.028),
+      new THREE.MeshStandardMaterial({color:d.metal,roughness:.16,metalness:.92,
+        emissive:d.bladeGlow,emissiveIntensity:.14}));
+    blade.position.y=-.92; kat.add(blade);
+    const edge=new THREE.Mesh(new THREE.BoxGeometry(.02,1.68,.032),
+      new THREE.MeshBasicMaterial({color:d.bladeGlow,toneMapped:false,transparent:true,opacity:.85}));
+    edge.position.set(.045,-.92,0); kat.add(edge);
+    const tip=new THREE.Mesh(new THREE.ConeGeometry(.055,.24,4),mat(d.metal,0x101820,.2));
+    tip.position.y=-1.83; tip.rotation.z=Math.PI; tip.rotation.y=Math.PI/4; kat.add(tip);
+    const tsuba=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.028,14),mat(0x2b2b34,0x101018,.15));
+    tsuba.position.y=-.03; kat.add(tsuba);
+    const grip=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.42,10),mat(d.handle,0x000000,.04));
+    grip.position.y=.20; kat.add(grip);
+    for(let i=0;i<5;i++){                                   // diamond wrap
+      const d1=new THREE.Mesh(new THREE.BoxGeometry(.075,.045,.075),mat(0x2a2a34,0x101018,.1));
+      d1.position.y=.04+i*.08; d1.rotation.y=Math.PI/4; kat.add(d1);
+    }
+    kat.position.set(.02,-.58,.06); kat.rotation.x=-.18; arms[1].add(kat); W.katana=kat;
+    // scabbard riding on the left hip
+    const saya=new THREE.Mesh(new THREE.CylinderGeometry(.055,.05,1.45,10),mat(0x14141c,0x000000,.04));
+    saya.position.set(.34,1.02,-.22); saya.rotation.z=.30; saya.rotation.x=-.30; g.add(saya);
+
+    /* ---- twin revolvers, holstered at the hips until Trick Shot ---- */
+    W.guns=[];
+    [-1,1].forEach(sx=>{
+      const gun=new THREE.Group();
+      const body=new THREE.Mesh(new THREE.BoxGeometry(.10,.13,.34),mat(0x1d1d25,0x000000,.06));
+      body.position.set(0,-.05,-.12); gun.add(body);
+      const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.30,10),mat(0x2b2b34,0x101018,.1));
+      barrel.rotation.x=Math.PI/2; barrel.position.set(0,-.01,-.36); gun.add(barrel);
+      const cyl=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,.11,12),mat(0x35353f,0x101018,.12));
+      cyl.rotation.x=Math.PI/2; cyl.position.set(0,-.01,-.19); gun.add(cyl);
+      const gripM=new THREE.Mesh(new THREE.BoxGeometry(.085,.20,.11),mat(0x23232b,0x101018,.05));
+      gripM.position.set(0,-.16,.02); gripM.rotation.x=.28; gun.add(gripM);
+      const trigger=new THREE.Mesh(new THREE.TorusGeometry(.045,.012,6,12),mat(0x55555f,0x101018,.15));
+      trigger.position.set(0,-.115,-.06); trigger.rotation.y=Math.PI/2; gun.add(trigger);
+      gun.position.set(0,-.68,.10); gun.visible=false;
+      arms[sx>0?1:0].add(gun); W.guns.push(gun);
+    });
+    // holsters on the hips
+    [-1,1].forEach(sx=>{
+      const hol=new THREE.Mesh(new THREE.BoxGeometry(.13,.30,.14),VEST2);
+      hol.position.set(.40*sx,1.02,-.02); hol.rotation.z=-sx*.12; g.add(hol);
+    });
+
+    W.shieldHex=true;   // hex shield geometry is built with the shared extras below
+  }
+
   // ---------------- VECTOR: data-blade duelist ----------------
   if(B==='vector'){
     const trim=new THREE.Mesh(new THREE.TorusGeometry(.4,.06,8,20),mat(d.visor,d.visor,.7));
@@ -740,10 +973,32 @@ function buildFighter(d,scale){
     new THREE.MeshBasicMaterial({color:d.c1,transparent:true,opacity:.3,
       blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));
   disc.rotation.x=-Math.PI/2; disc.position.y=.04; g.add(disc);
-  const shield=new THREE.Mesh(new THREE.SphereGeometry(1.25,20,16),
-    new THREE.MeshBasicMaterial({color:0x7df9ff,transparent:true,opacity:.22,
-      blending:THREE.AdditiveBlending,depthWrite:false}));
-  shield.position.y=1.2; shield.visible=false; g.add(shield);
+  let shield;
+  if(B==='kage'){
+    /* KAGE.EXE blocks behind a hard-light circuit panel, not a bubble */
+    shield=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.15,.10,6),
+      new THREE.MeshBasicMaterial({color:d.accent,transparent:true,opacity:.26,
+        blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
+    shield.rotation.x=Math.PI/2; shield.position.set(0,1.25,.42);
+    const trace=new THREE.MeshBasicMaterial({color:0xdff9ff,transparent:true,opacity:.8,
+      blending:THREE.AdditiveBlending,depthWrite:false,fog:false,toneMapped:false});
+    for(let i=0;i<3;i++){
+      const ln=new THREE.Mesh(new THREE.BoxGeometry(.85-i*.2,.05,.03),trace);
+      ln.position.set(0,(i-1)*.40,.07); shield.add(ln);
+      const cr=new THREE.Mesh(new THREE.BoxGeometry(.05,.85-i*.2,.03),trace);
+      cr.position.set((i-1)*.40,0,.07); shield.add(cr);
+    }
+    const core=new THREE.Mesh(new THREE.CircleGeometry(.24,6),
+      new THREE.MeshBasicMaterial({color:d.bladeGlow,transparent:true,opacity:.45,
+        blending:THREE.AdditiveBlending,depthWrite:false,fog:false,toneMapped:false}));
+    core.position.z=.08; shield.add(core);
+  } else {
+    shield=new THREE.Mesh(new THREE.SphereGeometry(1.25,20,16),
+      new THREE.MeshBasicMaterial({color:0x7df9ff,transparent:true,opacity:.22,
+        blending:THREE.AdditiveBlending,depthWrite:false}));
+    shield.position.y=1.2;
+  }
+  shield.visible=false; g.add(shield);
 
   g.traverse(o=>{ if(o.isMesh)o.castShadow=true; });
   g.userData={torso,head,arms,legs,fists,aura,lamp,shield,chest,visor,bulk,disc,W};
@@ -1087,17 +1342,18 @@ class Fighter{
     if(W0&&W0.hammer&&kind==='hammer')SFX.swing();
     return true;
   }
-  fire(sp,ratio){
+  fire(sp,ratio,off){
     const t=clamp(ratio||0,0,1);
+    const angOff=(off&&off.ang)||0, vyOff=(off&&off.vy)||0;
     const r=sp.r+((sp.chargeR||sp.r)-sp.r)*t;
     const dmg=sp.dmg+((sp.chargeDmg||sp.dmg)-sp.dmg)*t;
     const base=sp.base+((sp.chargeBase||sp.base)-sp.base)*t;
     const speed=sp.speed+((sp.chargeSpeed||sp.speed)-sp.speed)*t;
     const o=projMesh(sp.color,r);
     projectiles.push({owner:this.idx,x:this.x+this.face*36,y:this.cy-2,
-      vx:this.face*speed,vy:sp.arrow?-0.5:0,grav:sp.grav||0,life:sp.life,r,
+      vx:this.face*speed,vy:(sp.arrow?-0.5:0)+vyOff,grav:sp.grav||0,life:sp.life,r,
       bounce:sp.bounce||0,spin:sp.shuriken?.45:(sp.arrow?0:.18),arrow:!!sp.arrow,
-      d:{dmg,base,scale:sp.scale,ang:sp.ang},def:{c1:sp.color,glow:sp.trail||'#fff'},vis:o});
+      d:{dmg,base,scale:sp.scale,ang:sp.ang+angOff},def:{c1:sp.color,glow:sp.trail||'#fff'},vis:o});
     burst(wx(this.x+this.face*36),wy(this.cy),sp.trail||'#fff',10+Math.round(t*18),3+t*5);
     impactFX(wx(this.x+this.face*40),wy(this.cy),sp.trail||'#fff',4+t*7);
     burstDir(wx(this.x+this.face*36),wy(this.cy),sp.trail||'#fff',6,4,this.face>0?0:Math.PI,.5,18);
@@ -1125,6 +1381,25 @@ class Fighter{
   startSpecial(up,down,dirHeld){
     if(this.attack||this.cool>0||this.hitstun>0||this.dead>0||this.shielding||this.hang>0||this.dashT>0)return false;
     const d=this.d, sp=d.special, ub=d.upb;
+    /* ---- FINAL SMASH: meter full, press G ---- */
+    if(!up&&d.ko&&(this.ko||0)>=100){
+      this.ko=0; this.koReady=false;
+      const K=d.ko;
+      this.attack={kind:'hammer',data:Object.assign({},K,{finisher:true,koPunch:true}),t:0,hit:new Set(),hand:1};
+      this.vx=this.face*7.5; this.vy=Math.min(this.vy,-2.2);
+      this.invuln=Math.max(this.invuln,26);
+      this.cool=26;
+      const X=this.wx,Y=this.wy;
+      koFlash=.85; freeze=16; shake=1.0; shakeV={x:this.face*.6,y:-.2};
+      camPunch=1; camPunchDist=1.6; slowmo=30;
+      burst(X,Y,'#5ce9ff',70,15); burst(X,Y,'#ff5fd2',50,13); burst(X,Y,'#ffffff',30,10);
+      embers(X,Y,'#9ff2ff',30,9); embers(X,Y,'#ff5fd2',20,7);
+      ring3(X,Y,'#5ce9ff',7,30); ring3(X,Y,'#ffffff',3.5,24); ring3(X,Y,'#ff5fd2',10,34);
+      impactFX(X,Y,'#ffffff',17); impactFX(X,Y,'#5ce9ff',11);
+      hitTexts.push({x:this.cx,y:this.cy-70,t:64,v:'U L T I M A T E',color:'#9ff2ff',big:true});
+      SFX.ko(); SFX.charge(1);
+      return true;
+    }
     if(up&&ub){                                        // ---- up special / recovery ----
       if(this.recoveryUsed&&!this.onGround)return false;
       this.recoveryUsed=!this.onGround;
@@ -1133,6 +1408,36 @@ class Fighter{
       this.attack={kind:'upb',data:Object.assign({},ub),t:0,hit:new Set(),hand:0};
       if(ub.cutter)this.cutterT=72;
       if(ub.pump)this.pumpT=14;
+      if(ub.blink){                                    // BLINK FANG: step through the gap behind them
+        const foe=players[1-this.idx];
+        burst(this.wx,this.wy,ub.crescent?'#9ff2ff':d.glow,26,8,.8);
+        burstDir(this.wx,this.wy,'#ffffff',14,7,-Math.PI/2,.7,20);
+        ring3(this.wx,this.wy,'#9ff2ff',2.6,16);
+        impactFX(this.wx,this.wy,'#9ff2ff',6);
+        if(foe&&foe.dead<=0&&!foe.invuln){} // (no-op guard kept for clarity)
+        if(foe&&foe.dead<=0){
+          const side=foe.face>0?-1:1;                  // materialise behind their guard
+          const nx=clamp(foe.cx+side*42,STAGE.blast.l+80,STAGE.blast.r-80);
+          const ny=clamp(foe.cy-10,STAGE.blast.t+110,300);
+          const ox=this.x,oy=this.y;
+          this.x=nx; this.y=ny; this.face=-side;
+          this.vx=0; this.spin360=false;
+          // glitch trail between the two points
+          const steps=10, X0=wx(ox),Y0=wy(oy), X1=wx(nx),Y1=wy(ny);
+          for(let i2=0;i2<steps;i2++){
+            const tt=i2/steps;
+            burst(X0+(X1-X0)*tt,Y0+(Y1-Y0)*tt,i2%2?'#9ff2ff':'#ffffff',3,4,.6);
+          }
+          burst(this.wx,this.wy,'#ffffff',22,7,.9);
+          burstDir(this.wx,this.wy,'#9ff2ff',16,8,0,.6,20);
+          burstDir(this.wx,this.wy,'#9ff2ff',16,8,Math.PI,.6,20);
+          ring3(this.wx,this.wy,'#dff9ff',3.4,20);
+          impactFX(this.wx,this.wy,'#ffffff',9);
+          shake=Math.max(shake,.35); shakeV={x:this.face*.4,y:0};
+          SFX.blast(); SFX.shield();
+          this.castT=16;
+        }
+      }
       this.cool=6; this.jumpsLeft=Math.min(this.jumpsLeft,1);
       burst(this.wx,this.wy,ub.pump?'#9ff0ff':d.glow,24,7);
       ring3(this.wx,wy(this.cy),d.glow,1.8,16);
@@ -1141,6 +1446,20 @@ class Fighter{
     if(!sp)return false;
     if(sp.type==='projectile'){
       if(sp.charge){ this.charge=Math.max(this.charge||0,8); this.releaseCharge(); return true; }
+      if(sp.dual){                                     // TRICK SHOT: both revolvers, 360 spin
+        this.gunT=22; this.spin360=16;
+        this.fire(sp,0,{ang:-0.055,vy:1.1});
+        this.fire(sp,0,{ang:0.065,vy:-2.1});
+        const mx=this.wx+this.face*.55,my=wy(this.cy)-.18;
+        impactFX(mx,my,'#fff3c4',6);
+        burstDir(mx,my,'#ffd34d',12,7,this.face>0?0:Math.PI,.42,16);
+        burst(mx,my,'#ffe9a8',10,4,.6);
+        ring3(mx,my,'#ffe9a8',1.8,14);
+        SFX.shoot(); SFX.swing();
+        shake=Math.max(shake,.2); shakeV={x:-this.face*.35,y:0};
+        this.cool=sp.cd;
+        return true;
+      }
       this.fire(sp,0); this.cool=sp.cd; return true;
     }
     if(sp.type==='melee'&&sp.dash){                    // BIG-B's B-CHARGE: plow through
@@ -1180,7 +1499,7 @@ class Fighter{
       atk.comboDmg=(chaining?(atk.comboDmg||0):0)+d.dmg;
       atk.comboT=110;
       if(atk.combo>1)comboPops.push({p:atk,n:atk.combo,t:50});
-      if(atk.d.ko&&!d.koPunch)atk.ko=Math.min(100,(atk.ko||0)+d.dmg*1.8);
+      if(atk.d.ko&&!d.koPunch)atk.ko=Math.min(100,(atk.ko||0)+d.dmg*(atk.d.build==='kage'?1.25:1.8));
     }
     if(this.d.ko&&!d.koPunch){ this.ko=Math.min(100,(this.ko||0)+d.dmg*0.9);
     }
@@ -1229,7 +1548,17 @@ class Fighter{
 let players=[],projectiles=[],hitTexts=[],comboPops=[],shake=0,freeze=0,koFlash=0,time=0;
 let shakeV={x:0,y:0},camPunch=0,camPunchDist=0,slowmo=0,countT=0,countN=4,lastCount=4,gameBanner=0;
 let mode='cpu',cpuLevel=2,sceneName='title',toastMsg='',toastT=0;
-let selCursor=[0,3],selLocked=[false,false],winner=null;
+let selCursor=[0,3],selLocked=[false,false],selAlt=[0,0],winner=null;
+/* build a fighter definition with an alternate palette applied */
+function altDef(def,altIdx){
+  const A=def.alts&&def.alts[altIdx];
+  if(!A)return def;
+  const copy=Object.assign({},def,A.c);
+  copy.altName=A.name; copy.altIndex=altIdx;
+  copy.name=def.name;
+  return copy;
+}
+function altCount(def){ return def.alts?def.alts.length:1; }
 let podium=[null,null];
 
 /* ---------- CPU ---------- */
@@ -1344,7 +1673,7 @@ function updateFighter(p,inp){
   p.bufSpec=Math.max(0,(p.bufSpec||0)-1);
   p.chainT=Math.max(0,(p.chainT||0)-1); if(p.chainT===0)p.chain=0;
   p.comboT=Math.max(0,(p.comboT||0)-1); if(p.comboT===0){p.combo=0;p.comboDmg=0;}
-  if(p.castT>0)p.castT--; if(p.dropThrough>0)p.dropThrough--;
+  if(p.castT>0)p.castT--; if(p.dropThrough>0)p.dropThrough--; if(p.gunT>0)p.gunT--;
 
   const canShield=p.onGround&&!p.attack&&p.hitstun<=0&&p.shieldBroken<=0;
   p.shielding=!!(inp.shield&&canShield&&p.shield>0);
@@ -1475,7 +1804,13 @@ function updateFighter(p,inp){
         else {
           slashFX(wx(hb.x+hb.w/2),wy(hb.y+hb.h/2),hb.w*PX*.75,hb.h*PX*.75,p.d.glow);
           if(p.d.sword) slashArc(wx(hb.x+hb.w/2),wy(hb.y+hb.h/2),p.face,
-                                 Math.max(hb.w,hb.h)*PX*.7,'#eaf8ff',a.kind==='up');
+                                 Math.max(hb.w,hb.h)*PX*.7*(p.d.longArcs?1.25:1),
+                                 p.d.arcColor||'#eaf8ff',a.kind==='up');
+          if(p.d.build==='kage'){                       // blade afterimage streaks
+            const bx=wx(hb.x+hb.w/2),by=wy(hb.y+hb.h/2);
+            burstDir(bx,by,'#9ff2ff',8,6,p.face>0?0:Math.PI,.5,18);
+            impactFX(bx,by,'#dff9ff',5.5,a.kind==='up'?Math.PI/2:0);
+          }
         }
       }
       if(!dt.shot&&!foe.dead&&!a.hit.has(foe.idx)&&foe.invuln<=0&&overlap(hb,foe.box)){
@@ -1657,6 +1992,45 @@ function syncModel(p){
     if(Wp.emblemMats)Wp.emblemMats.forEach(m=>{ m.emissiveIntensity=gl; });
     if(hype>=1&&time%4===0)embers(p.wx,wy(p.cy)+.35,'#ffd34d',1,2.2);
   }
+  /* ---------- KAGE.EXE: revolvers, sash, mask, trick-shot spin ---------- */
+  if(p.d.build==='kage'){
+    const gunning=p.gunT>0;
+    if(Wp.guns){
+      Wp.guns.forEach((gn,i)=>{ gn.visible=gunning; });
+      if(Wp.katana)Wp.katana.visible=!gunning;            // blade away while the guns are out
+    }
+    if(gunning){                                          // both arms out, revolvers levelled
+      const e=clamp(p.gunT/22,0,1);
+      u.arms[0].rotation.x=-1.52; u.arms[0].rotation.z=.30; u.arms[0].rotation.y=.22;
+      u.arms[1].rotation.x=-1.40; u.arms[1].rotation.z=-.16; u.arms[1].rotation.y=-.14;
+      u.torso.rotation.y=(1-e)*.25;
+      p.model.position.x-=p.face*.05*e;
+    }
+    if(p.spin360>0){                                      // showman 360 before the first shot
+      p.spin360--;
+      p.model.rotation.y+=Math.PI*2/16;
+      u.legs[0].rotation.x=-.35; u.legs[1].rotation.x=.35;
+      u.arms[0].rotation.x=-.5; u.arms[1].rotation.x=-.5;
+    } else if(p.gunT>0){ /* held by the aim pose above */ }
+    if(Wp.sash){                                          // four ribbons streaming behind him
+      const air=p.onGround?0:1;
+      const wind=clamp(-p.vx*.075,-.85,.85)-(air*.34)-(p.dashT>0?.45:0);
+      const attack=!!p.attack;
+      Wp.sash.forEach((r,i)=>{
+        const wantX=wind-.22-i*.07-(attack?.35:0);
+        r.rotation.x+=(wantX-r.rotation.x)*.17;
+        r.rotation.z+=(((i-1.5)*.13)+(Math.sin(time*.22+i*1.7)*.16)*(attack?2.2:1.2))-r.rotation.z*.12;
+        r.rotation.y=Math.sin(time*.19+i)*.10;
+      });
+    }
+    if(Wp.ledMat&&Wp.ledBase){                           // mask flickers, flares on action
+      const fl=.80+Math.sin(time*.11)*.08+Math.sin(time*.53)*.05
+               +(p.castT>0?.45:0)+(p.dashT>0?.30:0)+(p.attack?.15:0);
+      Wp.ledMat.color.copy(Wp.ledBase).multiplyScalar(clamp(fl,.35,1.55));
+      if(p.ko>=100&&time%4===0)embers(p.wx,wy(p.cy)+.4,'#9ff2ff',1,2.4);
+    }
+  }
+
   // BIG-B rocket uppercut exhaust
   if(p.attack&&p.attack.kind==='upb'&&p.attack.data&&p.attack.data.rocket){
     burstDir(p.wx,p.wy-.1,'#ffb347',3,5,-Math.PI/2,.5,18);
@@ -1707,6 +2081,13 @@ function syncModel(p){
     } else if(a.kind==='down'){                             // downward spike
       lead.rotation.x=1.5*ext; rear.rotation.x=1.2*ext;
       lead.rotation.y=0; lead.rotation.z=0; u.torso.rotation.y=0; u.torso.rotation.z=0;
+      if(dt.plunge&&!p.onGround){                           // KAGE somersaults into the plunge
+        const tt=clamp(a.t/Math.max(1,dt.start+dt.active+dt.end),0,1);
+        p.model.rotation.z=-Math.PI*2*tt;
+        u.legs[0].rotation.x=.9; u.legs[1].rotation.x=.55;
+        u.torso.rotation.x=.25;
+        if(time%2===0)burst(p.wx,wy(p.cy),'#9ff2ff',2,3.2,.6);
+      }
     } else if(heavy){                                       // hook / KO punch — whole body turns over
       lead.rotation.x=-1.45*ext; lead.rotation.y=-sgn*1.05*ext; lead.rotation.z=sgn*.25*ext;
       rear.rotation.x=-1.2+.2*ext; rear.rotation.z=-sgn*.35;
@@ -1733,6 +2114,7 @@ function syncModel(p){
   } else {
     u.torso.rotation.y*=.8; u.torso.rotation.z*=.8; u.torso.rotation.x*=.75;
     u.head.rotation.x*=.85;
+    p.model.rotation.z*=.8;
     u.arms.forEach(ar=>{ ar.rotation.y*=.7; if(!p.d.boxer)ar.rotation.z*=.8; });
   }
 
@@ -1843,6 +2225,10 @@ function drawHUD(){
     hx.fillText(Math.round(p.percent)+'%',x,H-60);
     hx.shadowColor=col; hx.shadowBlur=10; hx.fillStyle=col; hx.font='bold 15px Trebuchet MS';
     hx.fillText(p.d.name+(p.cpu?'  [CPU]':''),x,H-110);
+    if(p.d.altName&&p.d.altIndex>0){
+      hx.font='bold 11px Trebuchet MS'; hx.fillStyle=p.d.glow; hx.shadowBlur=8;
+      hx.fillText(p.d.altName,x,H-96);
+    }
     if(p.d.placeholder){
       hx.font='bold 11px Trebuchet MS'; hx.fillStyle='rgba(255,211,77,.9)';
       hx.shadowColor='#ffd34d'; hx.shadowBlur=8;
@@ -1970,16 +2356,18 @@ function refreshSelect(){
   });
   $('pick1').textContent='P1  ▸  '+ROSTER[selCursor[0]].name+(selLocked[0]?'  ✔':'');
   $('pick2').textContent=(mode==='cpu'?'CPU':'P2')+'  ▸  '+ROSTER[selCursor[1]].name+(selLocked[1]?'  ✔':'');
-  $('tagline').textContent=ROSTER[selCursor[selLocked[0]?1:0]].blurb;
+  const ti=selLocked[0]?1:0, tdef=ROSTER[selCursor[ti]], talt=selAlt[ti];
+  $('tagline').textContent=tdef.blurb+((tdef.alts&&talt>0)?'   ·   ALT: '+tdef.alts[talt].name:'');
   const flagship=ROSTER.some(r=>r.main)?'  ·  ★ flagship':'';
   $('selHint').textContent=selLocked[0]&&selLocked[1]?('ENTER to FIGHT  ·  ESC back'+flagship)
     :(!selLocked[0]?'P1: A/D choose · F lock in':(mode==='cpu'?'CPU: ←/→ choose · F lock in':'P2: ←/→ choose · NUM 1 lock in'));
   // 3D podium models
   [0,1].forEach(i=>{
-    const def=ROSTER[selCursor[i]];
-    if(!podium[i]||podium[i].userData.defId!==def.id){
+    const def=altDef(ROSTER[selCursor[i]],selAlt[i]);
+    const key=def.id+':'+(def.altIndex||0);
+    if(!podium[i]||podium[i].userData.defId!==key){
       if(podium[i])scene.remove(podium[i]);
-      const m=buildFighter(def); m.userData.defId=def.id;
+      const m=buildFighter(def); m.userData.defId=key;
       m.position.set(i===0?-5.2:5.2,3.2,2.5); m.scale.setScalar(1.25);
       scene.add(m); podium[i]=m;
     }
@@ -2001,8 +2389,8 @@ function startMatch(){
   players.forEach(p=>scene.remove(p.model));
   projectiles.forEach(p=>{p.vis.inUse=false;p.vis.mesh.visible=false;});
   clearPodium();
-  players=[new Fighter(ROSTER[selCursor[0]],0,false),
-           new Fighter(ROSTER[selCursor[1]],1,mode==='cpu',cpuLevel)];
+  players=[new Fighter(altDef(ROSTER[selCursor[0]],selAlt[0]),0,false),
+           new Fighter(altDef(ROSTER[selCursor[1]],selAlt[1]),1,mode==='cpu',cpuLevel)];
   players[0].scheme=SCHEMES[0]; players[1].scheme=SCHEMES[1];
   projectiles=[];hitTexts=[];comboPops=[];parts.length=0;shake=0;freeze=0;winner=null;
   shakeV={x:0,y:0}; camPunch=0; camPunchDist=0; slowmo=0;
@@ -2032,9 +2420,11 @@ function stepGame(){
     const move=(pi,dx)=>{selCursor[pi]=(selCursor[pi]+dx+ROSTER.length)%ROSTER.length;refreshSelect();SFX.menu();};
     if(!selLocked[0]){
       if(pressed['a'])move(0,-1); if(pressed['d'])move(0,1);
+      if(pressed['c']){selAlt[0]=(selAlt[0]+1)%altCount(ROSTER[selCursor[0]]);SFX.menu();refreshSelect();}
       if(pressed['f']||pressed['Enter']){selLocked[0]=true;burst(-5.2,4.2,ROSTER[selCursor[0]].glow,40,8);impactFX(-5.2,4.2,ROSTER[selCursor[0]].glow,7);SFX.pick();refreshSelect();}
     } else if(!selLocked[1]){
       if(pressed['ArrowLeft'])move(1,-1); if(pressed['ArrowRight'])move(1,1);
+      if(pressed['c'])selAlt[1]=(selAlt[1]+1)%altCount(ROSTER[selCursor[1]]);
       if(pressed[',']||pressed['Numpad1']||pressed['f']||pressed['Enter']){selLocked[1]=true;burst(5.2,4.2,ROSTER[selCursor[1]].glow,40,8);impactFX(5.2,4.2,ROSTER[selCursor[1]].glow,7);SFX.pick();refreshSelect();}
     } else if(pressed['Enter']||pressed[' ']||pressed['f'])startMatch();
     if(pressed['Escape']){

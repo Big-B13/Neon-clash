@@ -131,14 +131,25 @@ function collect(model) {
 
 const which = process.argv[2] || 'all';
 const out = {};
+const expand = [];
 for (const def of ROSTER) {
+  expand.push({ def, key: def.id });
+  if (process.env.ALTS && def.alts) {
+    def.alts.forEach((a, i) => {
+      if (i === 0) return;
+      expand.push({ def: Object.assign({}, def, a.c, { altName: a.name, altIndex: i }), key: def.id + '#' + a.name });
+    });
+  }
+}
+for (const item of expand) {
+  const def = item.def;
   if (which !== 'all' && def.id !== which) continue;
   try {
     const m = buildFighter(def);
-    out[def.id] = { def: { id: def.id, name: def.name, c1: def.c1, glow: def.glow, c2: def.c2,
-                           skin: def.skin, tag: def.tag }, tris: collect(m) };
+    out[item.key] = { def: { id: def.id, name: def.altName || def.name, c1: def.c1, glow: def.glow,
+                             c2: def.c2, skin: def.skin, tag: def.tag }, tris: collect(m) };
   } catch (e) {
-    out[def.id] = { def: { id: def.id, name: def.name }, error: e.message, tris: [] };
+    out[item.key] = { def: { id: def.id, name: item.key }, error: e.message, tris: [] };
   }
 }
 fs.writeFileSync(process.argv[3] || '/tmp/preview/geom.json', JSON.stringify(out));

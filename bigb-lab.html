@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big-B Character & Animation Lab</title>
+    <style>
+        :root {
+            --bg-color: #0d0e15;
+            --panel-bg: #161822;
+            --accent-neon: #00ffcc;
+            --accent-pink: #ff007f;
+            --text-main: #f0f2f5;
+            --text-muted: #8b92a5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            letter-spacing: 2px;
+            color: var(--accent-neon);
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 850px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stage-card {
+            background-color: var(--panel-bg);
+            border: 1px solid #26293a;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            background: linear-gradient(135deg, #0a0b10 0%, #13151f 100%);
+            border-radius: 8px;
+            border: 1px solid #2a2e43;
+            width: 100%;
+            max-width: 640px;
+            height: 400px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .controls-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid #26293a;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        button {
+            background-color: #202436;
+            color: var(--text-main);
+            border: 1px solid #323852;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2c324c;
+            border-color: var(--accent-neon);
+            color: var(--accent-neon);
+        }
+
+        button.active {
+            background-color: var(--accent-neon);
+            color: #0d0e15;
+            border-color: var(--accent-neon);
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.4);
+        }
+
+        select {
+            background-color: #202436;
+            color: var(--text-main);
+            border: 1px solid #323852;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--accent-neon);
+        }
+
+        .status-bar {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .status-highlight {
+            color: var(--accent-pink);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>BIG-B CHARACTER LAB</h1>
+        <p>Interactive Vector Rig & Move Engine</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Canvas Stage -->
+        <div class="stage-card">
+            <canvas id="renderCanvas" width="640" height="400"></canvas>
+            <div class="status-bar">
+                <span>Current State: <span id="stateDisplay" class="status-highlight">IDLE</span></span>
+                <span>FPS: <span id="fpsDisplay">60</span></span>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-panel">
+            <div class="control-group">
+                <label>Costume Palette</label>
+                <select id="costumeSelect">
+                    <option value="neon">01 · Neon Default</option>
+                    <option value="crimson">02 · Oni Crimson</option>
+                    <option value="ghost">03 · Ghost Protocol</option>
+                    <option value="acid">04 · Acid Matrix</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Animations & Actions</label>
+                <div class="btn-grid">
+                    <button class="active" data-action="idle">Idle Stance</button>
+                    <button data-action="run">Dash Run</button>
+                    <button data-action="jab">Jab Combo</button>
+                    <button data-action="fsmash">F-Smash</button>
+                    <button data-action="bair">Backair</button>
+                    <button data-action="special">B-Special</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('renderCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // State variables
+        let currentAction = 'idle';
+        let costume = 'neon';
+        let animTimer = 0;
+        let lastTime = performance.now();
+        let frameCount = 0;
+        let fpsTimer = 0;
+
+        // Color palettes
+        const palettes = {
+            neon: { hoodie: '#ffffff', vest: '#1a1a24', accent: '#00ffcc', scarf: '#11131c', hat: '#151722', skin: '#e0ac69' },
+            crimson: { hoodie: '#1f1618', vest: '#0f0a0b', accent: '#ff2244', scarf: '#2b0c10', hat: '#1a0d0e', skin: '#d0a060' },
+            ghost: { hoodie: '#d0d4e0', vest: '#252a3a', accent: '#00d2ff', scarf: '#181b24', hat: '#1d212c', skin: '#c8b090' },
+            acid: { hoodie: '#e5e8d3', vest: '#1d2218', accent: '#ccff00', scarf: '#141710', hat: '#171c13', skin: '#d8b070' }
+        };
+
+        // Event Listeners for UI
+        document.querySelectorAll('.btn-grid button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.btn-grid button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentAction = e.target.getAttribute('data-action');
+                document.getElementById('stateDisplay').textContent = currentAction.toUpperCase();
+                animTimer = 0; // Reset animation loop on switch
+            });
+        });
+
+        document.getElementById('costumeSelect').addEventListener('change', (e) => {
+            costume = e.target.value;
+        });
+
+        // Main Render Loop
+        function loop(timestamp) {
+            const dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+            animTimer += dt;
+
+            // FPS calculation
+            frameCount++;
+            fpsTimer += dt;
+            if (fpsTimer >= 1.0) {
+                document.getElementById('fpsDisplay').textContent = frameCount;
+                frameCount = 0;
+                fpsTimer = 0;
+            }
+
+            update(dt);
+            render();
+
+            requestAnimationFrame(loop);
+        }
+
+        function update(dt) {
+            // Logic updates per frame if needed
+        }
+
+        function render() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines for stage floor
+            ctx.strokeStyle = '#1d2232';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, 320);
+            ctx.lineTo(640, 320);
+            ctx.stroke();
+
+            // Render Character Big-B based on state
+            drawBigB(320, 280, currentAction, animTimer, palettes[costume]);
+        }
+
+        function drawBigB(x, y, action, time, pal) {
+            ctx.save();
+            
+            // Procedural offsets based on animation timer
+            let bobY = 0;
+            let tiltAngle = 0;
+            let armOffset = 0;
+
+            if (action === 'idle') {
+                bobY = Math.sin(time * 4) * 4;
+            } else if (action === 'run') {
+                bobY = Math.abs(Math.sin(time * 12)) * 8;
+                tiltAngle = 0.15;
+            } else if (action === 'jab') {
+                armOffset = Math.sin(time * 20) * 15;
+            } else if (action === 'fsmash') {
+                tiltAngle = -0.1;
+            }
+
+            ctx.translate(x, y + bobY);
+            ctx.rotate(tiltAngle);
+
+            // --- SCARF / TRAIL ---
+            ctx.fillStyle = pal.scarf;
+            ctx.beginPath();
+            ctx.moveTo(-15, -40);
+            let scarfWave = Math.sin(time * 8) * 15;
+            ctx.quadraticCurveTo(-50, -30 + scarfWave, -80, -10 + scarfWave * 1.5);
+            ctx.quadraticCurveTo(-50, -20, -15, -20);
+            ctx.fill();
+
+            // --- LEGS & SNEAKERS ---
+            ctx.fillStyle = '#111';
+            // Left leg
+            ctx.fillRect(-14, 0, 10, 45);
+            // Right leg
+            ctx.fillRect(4, 0, 10, 45);
+            // Chunky sneakers
+            ctx.fillStyle = pal.accent;
+            ctx.fillRect(-20, 40, 18, 10);
+            ctx.fillRect(2, 40, 18, 10);
+
+            // --- TORSO / HOODIE & VEST ---
+            ctx.fillStyle = pal.hoodie;
+            ctx.beginPath();
+            ctx.roundRect(-22, -50, 44, 55, [8, 8, 4, 4]);
+            ctx.fill();
+
+            // Vest
+            ctx.fillStyle = pal.vest;
+            ctx.fillRect(-18, -48, 12, 50);
+            ctx.fillRect(6, -48, 12, 50);
+
+            // --- ARMS ---
+            ctx.fillStyle = pal.hoodie;
+            ctx.fillRect(-32, -45 + armOffset, 12, 35);
+            ctx.fillRect(20, -45 - armOffset, 12, 35);
+
+            // --- HEAD & HAT ---
+            // Head base
+            ctx.fillStyle = pal.skin;
+            ctx.fillRect(-12, -75, 24, 28);
+
+            // LED Face visor (Amber/Neon glow)
+            ctx.fillStyle = pal.accent;
+            ctx.shadowColor = pal.accent;
+            ctx.shadowBlur = 10;
+            ctx.fillRect(-8, -68, 16, 6);
+            ctx.shadowBlur = 0; // reset
+
+            // Cowboy Hat
+            ctx.fillStyle = pal.hat;
+            // Brim
+            ctx.beginPath();
+            ctx.ellipse(0, -78, 35, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Crown
+            ctx.fillRect(-14, -98, 28, 22);
+            // Hat band
+            ctx.fillStyle = pal.accent;
+            ctx.fillRect(-14, -82, 28, 4);
+
+            ctx.restore();
+        }
+
+        // Start animation loop
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>

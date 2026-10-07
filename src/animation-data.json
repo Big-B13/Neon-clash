@@ -1,0 +1,921 @@
+{
+  "character": {
+    "name": "KAGE.EXE",
+    "title": "The Neon Ronin — cyber-shinobi rushdown swordfighter",
+    "referenceSheet": "assets/moves/00-idle.png",
+    "view": "strict side profile, facing right",
+    "framing": "full body head-to-toe, character fills ~80% of frame height, centered",
+    "background": "flat dark charcoal (#15161c-ish) — key out or ML-matte for sprites",
+    "weapons": [
+      "plasma-edge katana",
+      "twin revolvers",
+      "grapple wire",
+      "hologram drone"
+    ]
+  },
+  "handoffNotes": [
+    "All move stills share one reference sheet (00-idle.png) for character/framing consistency — re-anchor scale per image before atlasing.",
+    "Background is flat and near-uniform: chroma/luma key or background-removal gives clean cutouts.",
+    "Still images are KEY poses, not in-between frames. Tween between poses with the phase timings below (ease-out on strikes, ease-in-out on movement).",
+    "Each phase lists milliseconds. Startup = windup phases, Active = phases with hit events, Recovery = remainder.",
+    "Layer VFX (slash arcs, muzzle flashes, afterimages, glitch splits) as particles drawn OVER the sprite — do not bake into the sprite.",
+    "Suggested audio per move is listed in fx as text cues."
+  ],
+  "moves": [
+    {
+      "id": "idle",
+      "name": "Idle — Neon Stance",
+      "input": "—",
+      "type": "movement",
+      "damage": "—",
+      "image": "00-idle.png",
+      "loop": true,
+      "phases": [
+        {
+          "name": "breathe-in",
+          "ms": 950,
+          "pose": "stance rises slightly, shoulders relax, scarf sways right",
+          "fx": [
+            "scarf sine sway",
+            "soft mask-lens glow pulse"
+          ]
+        },
+        {
+          "name": "breathe-out",
+          "ms": 950,
+          "pose": "stance sinks slightly, weight settles",
+          "fx": [
+            "scarf sine sway"
+          ]
+        }
+      ],
+      "notes": "Reference pose. Use as the scale anchor for all other stills."
+    },
+    {
+      "id": "run",
+      "name": "Run — Dash Protocol",
+      "input": "hold →",
+      "type": "movement",
+      "damage": "—",
+      "image": "01-run.png",
+      "loop": true,
+      "phases": [
+        {
+          "name": "stride-A",
+          "ms": 130,
+          "pose": "left knee drives high, arms pump opposite",
+          "fx": [
+            "dust puff at push-off foot"
+          ]
+        },
+        {
+          "name": "pass",
+          "ms": 130,
+          "pose": "legs pass mid-line, body lowest",
+          "fx": []
+        },
+        {
+          "name": "stride-B",
+          "ms": 130,
+          "pose": "right knee drives high, arms swapped",
+          "fx": [
+            "dust puff at push-off foot"
+          ]
+        },
+        {
+          "name": "pass-2",
+          "ms": 130,
+          "pose": "legs pass mid-line",
+          "fx": []
+        }
+      ],
+      "notes": "8fps cycle on the stills reads well; add horizontal speed-line particles."
+    },
+    {
+      "id": "jump",
+      "name": "Jump — Wire Assist",
+      "input": "jump",
+      "type": "movement",
+      "damage": "—",
+      "image": "02-jump.png",
+      "phases": [
+        {
+          "name": "crouch",
+          "ms": 140,
+          "pose": "deep squat, arms back",
+          "fx": []
+        },
+        {
+          "name": "launch",
+          "ms": 180,
+          "pose": "full extension, arms sweep up",
+          "fx": [
+            "whoosh",
+            "dust ring at feet"
+          ]
+        },
+        {
+          "name": "rise+apex",
+          "ms": 190,
+          "pose": "knees tuck, arms balance",
+          "fx": [
+            "faint motion arcs under boots"
+          ]
+        },
+        {
+          "name": "fall",
+          "ms": 200,
+          "pose": "legs extend for landing",
+          "fx": []
+        },
+        {
+          "name": "land",
+          "ms": 110,
+          "pose": "absorb, arms low",
+          "fx": [
+            "dust burst",
+            "landing thud"
+          ]
+        },
+        {
+          "name": "recover",
+          "ms": 180,
+          "pose": "return to idle",
+          "fx": []
+        }
+      ],
+      "notes": "Short hop = launch+land only (~490ms)."
+    },
+    {
+      "id": "jab",
+      "name": "Jab — Street Format",
+      "input": "A (tap)",
+      "type": "ground",
+      "damage": "1.8 / 2.0 / 4.5%",
+      "image": "03-jab.png",
+      "phases": [
+        {
+          "name": "hit-1 elbow",
+          "ms": 85,
+          "pose": "lead elbow extends",
+          "fx": [
+            "white speed lines",
+            "small spark"
+          ],
+          "active": true
+        },
+        {
+          "name": "hit-2 revolver-butt",
+          "ms": 95,
+          "pose": "rear hand swings revolver grip forward",
+          "fx": [
+            "metal click sfx",
+            "spark"
+          ],
+          "active": true
+        },
+        {
+          "name": "wind-spin",
+          "ms": 60,
+          "pose": "torso winds opposite",
+          "fx": []
+        },
+        {
+          "name": "finisher slash",
+          "ms": 110,
+          "pose": "spinning katana arc, launching",
+          "fx": [
+            "cyan slash arc",
+            "slash sfx"
+          ],
+          "active": true
+        },
+        {
+          "name": "recover",
+          "ms": 220,
+          "pose": "back to stance",
+          "fx": []
+        }
+      ],
+      "notes": "True combo to ~8%. Finisher knocks away."
+    },
+    {
+      "id": "ftilt",
+      "name": "F-Tilt — Neon Fang",
+      "input": "→ + A",
+      "type": "ground",
+      "damage": "9% (12% tipper)",
+      "image": "04-ftilt.png",
+      "phases": [
+        {
+          "name": "windup",
+          "ms": 130,
+          "pose": "blade pulled back, slight rear lean",
+          "fx": []
+        },
+        {
+          "name": "thrust",
+          "ms": 100,
+          "pose": "deep lunge, full katana stab",
+          "fx": [
+            "cyan tip spark",
+            "thrust sfx"
+          ],
+          "active": true
+        },
+        {
+          "name": "hold",
+          "ms": 70,
+          "pose": "extension held",
+          "fx": []
+        },
+        {
+          "name": "recover",
+          "ms": 230,
+          "pose": "pull back to stance",
+          "fx": []
+        }
+      ],
+      "notes": "Sweet spot on the outer 20% of the blade = tipper damage/knockback."
+    },
+    {
+      "id": "dashattack",
+      "name": "Dash Attack — Wire Slide",
+      "input": "dash + A",
+      "type": "ground",
+      "damage": "9%",
+      "image": "05-dash-attack.png",
+      "phases": [
+        {
+          "name": "drop",
+          "ms": 120,
+          "pose": "drops into knee-slide, blade sheathed, revolvers out",
+          "fx": []
+        },
+        {
+          "name": "slide",
+          "ms": 340,
+          "pose": "low slide, electrified wire strung between revolvers",
+          "fx": [
+            "blue wire sparks",
+            "dust trail",
+            "glide sfx"
+          ],
+          "active": true,
+          "hitAt": 0.45
+        },
+        {
+          "name": "rise",
+          "ms": 120,
+          "pose": "stands out of slide",
+          "fx": []
+        },
+        {
+          "name": "recover",
+          "ms": 240,
+          "pose": "re-holster, idle",
+          "fx": []
+        }
+      ],
+      "notes": "Trips opponents (knockdown) on hit."
+    },
+    {
+      "id": "fsmash",
+      "name": "F-Smash — Iai: Overclock Draw",
+      "input": "→ + A (hold)",
+      "type": "ground smash",
+      "damage": "22 / 30% tipper",
+      "image": "06-fsmash.png",
+      "phases": [
+        {
+          "name": "sheath",
+          "ms": 210,
+          "pose": "blade sheathed, hand on grip, stance low",
+          "fx": [
+            "click sfx"
+          ]
+        },
+        {
+          "name": "charge",
+          "ms": 760,
+          "pose": "held stance, humming blade",
+          "fx": [
+            "cyan sparks gather",
+            "rising hum sfx"
+          ],
+          "chargeable": true
+        },
+        {
+          "name": "strike",
+          "ms": 105,
+          "pose": "explosive draw-cut, full extension",
+          "fx": [
+            "huge white+cyan slash arc",
+            "screen shake",
+            "flash frame",
+            "speed lines",
+            "boom sfx"
+          ],
+          "active": true
+        },
+        {
+          "name": "follow-through",
+          "ms": 280,
+          "pose": "blade extended, scarf settling",
+          "fx": []
+        },
+        {
+          "name": "re-sheath",
+          "ms": 230,
+          "pose": "flick blade back to sheath",
+          "fx": [
+            "click sfx"
+          ]
+        },
+        {
+          "name": "recover",
+          "ms": 200,
+          "pose": "idle",
+          "fx": []
+        }
+      ],
+      "notes": "Kill move. Tipper at max range is the payoff — huge reward, huge endlag."
+    },
+    {
+      "id": "nair",
+      "name": "N-Air — Data Halo",
+      "input": "A in air",
+      "type": "aerial",
+      "damage": "10% (multi-hit)",
+      "image": "07-nair.png",
+      "phases": [
+        {
+          "name": "rise",
+          "ms": 190,
+          "pose": "jumps, arms fold in",
+          "fx": [
+            "whoosh"
+          ]
+        },
+        {
+          "name": "spin",
+          "ms": 520,
+          "pose": "full-body spin, blade extended",
+          "fx": [
+            "circular slash halo",
+            "afterimages",
+            "3 hit events at 25/55/85%"
+          ],
+          "active": true
+        },
+        {
+          "name": "land",
+          "ms": 130,
+          "pose": "absorb landing",
+          "fx": [
+            "dust",
+            "thud"
+          ]
+        },
+        {
+          "name": "recover",
+          "ms": 200,
+          "pose": "idle",
+          "fx": []
+        }
+      ],
+      "notes": "Get-off-me button. Early hit strongest; late hits drag."
+    },
+    {
+      "id": "dair",
+      "name": "D-Air — Guillotine Drop",
+      "input": "↓ + A in air",
+      "type": "aerial",
+      "damage": "13% SPIKE",
+      "image": "08-dair.png",
+      "phases": [
+        {
+          "name": "stall-rise",
+          "ms": 230,
+          "pose": "brief upward hang, blade raised two-handed",
+          "fx": [
+            "whoosh"
+          ]
+        },
+        {
+          "name": "hang",
+          "ms": 200,
+          "pose": "weightless beat at apex",
+          "fx": []
+        },
+        {
+          "name": "plunge",
+          "ms": 120,
+          "pose": "vertical dive, blade pointed straight down",
+          "fx": [
+            "afterimage trail",
+            "fall streaks"
+          ],
+          "active": true
+        },
+        {
+          "name": "impact",
+          "ms": 110,
+          "pose": "landing stab, deep crouch",
+          "fx": [
+            "shock ring",
+            "screen shake",
+            "boom"
+          ],
+          "active": true
+        },
+        {
+          "name": "recover",
+          "ms": 260,
+          "pose": "pull blade free, idle",
+          "fx": []
+        }
+      ],
+      "notes": "Spikes airborne opponents. Punishable on shield if landed on stage."
+    },
+    {
+      "id": "neutralb",
+      "name": "Neutral B — Trick Shot",
+      "input": "B (tap / hold)",
+      "type": "special",
+      "damage": "1.8×4 taps / 1.2×6 fan",
+      "image": "09-neutral-b.png",
+      "phases": [
+        {
+          "name": "draw",
+          "ms": 190,
+          "pose": "both revolvers drawn, crossed stance",
+          "fx": [
+            "double click sfx"
+          ]
+        },
+        {
+          "name": "taps",
+          "ms": 400,
+          "pose": "alternating precise shots (4)",
+          "fx": [
+            "muzzle flash",
+            "orange tracer",
+            "shot sfx ×4"
+          ],
+          "active": true
+        },
+        {
+          "name": "fan-fire",
+          "ms": 360,
+          "pose": "spread volley (6 rounds)",
+          "fx": [
+            "6 tracers in cone",
+            "shell casings",
+            "rattle sfx"
+          ],
+          "active": true
+        },
+        {
+          "name": "reload",
+          "ms": 320,
+          "pose": "wire-spin revolver flourish",
+          "fx": [
+            "zip sfx",
+            "RELOADED pop-up"
+          ]
+        },
+        {
+          "name": "holster",
+          "ms": 210,
+          "pose": "guns away, idle",
+          "fx": [
+            "click"
+          ]
+        }
+      ],
+      "notes": "12-round cylinder. Fan-fire shreds shields (~40% shield damage)."
+    },
+    {
+      "id": "sideb",
+      "name": "Side B — Blink Fang",
+      "input": "→ + B",
+      "type": "special",
+      "damage": "12%",
+      "image": "10-side-b.png",
+      "phases": [
+        {
+          "name": "windup",
+          "ms": 130,
+          "pose": "low crouch, blade hand on grip",
+          "fx": [
+            "charge sfx"
+          ]
+        },
+        {
+          "name": "vanish",
+          "ms": 60,
+          "pose": "body dissolves into glitch particles",
+          "fx": [
+            "RGB split ghosts",
+            "glitch sfx"
+          ],
+          "intangible": true
+        },
+        {
+          "name": "dash",
+          "ms": 150,
+          "pose": "streaks forward through targets",
+          "fx": [
+            "cyan afterimage trail"
+          ],
+          "active": true,
+          "hitAt": 0.55
+        },
+        {
+          "name": "reappear",
+          "ms": 90,
+          "pose": "reforms mid-slash",
+          "fx": [
+            "slash arc",
+            "spark burst"
+          ]
+        },
+        {
+          "name": "recover",
+          "ms": 400,
+          "pose": "settle to idle",
+          "fx": []
+        }
+      ],
+      "notes": "Passes through opponents AND projectiles during dash. Hold input to delay reappear up to 400ms for cross-ups."
+    },
+    {
+      "id": "upb",
+      "name": "Up B — Ghost Line",
+      "input": "↑ + B",
+      "type": "special (recovery)",
+      "damage": "8% rising slash",
+      "image": "11-up-b.png",
+      "phases": [
+        {
+          "name": "aim",
+          "ms": 150,
+          "pose": "arm raised, targeting up-forward",
+          "fx": []
+        },
+        {
+          "name": "fire-wire",
+          "ms": 90,
+          "pose": "grapple cable launches",
+          "fx": [
+            "wire line fx",
+            "zip sfx",
+            "anchor ring flash"
+          ]
+        },
+        {
+          "name": "yank",
+          "ms": 240,
+          "pose": "body pulled taut along the wire",
+          "fx": [
+            "afterimages"
+          ],
+          "intangible": false
+        },
+        {
+          "name": "rising-slash",
+          "ms": 120,
+          "pose": "blade arc at apex",
+          "fx": [
+            "slash arc"
+          ],
+          "active": true
+        },
+        {
+          "name": "flip-down",
+          "ms": 330,
+          "pose": "somersault descent",
+          "fx": [
+            "afterimages"
+          ]
+        },
+        {
+          "name": "land",
+          "ms": 110,
+          "pose": "absorb",
+          "fx": [
+            "dust",
+            "thud"
+          ]
+        },
+        {
+          "name": "recover",
+          "ms": 200,
+          "pose": "idle (freefall if wire missed)",
+          "fx": []
+        }
+      ],
+      "notes": "Tether: hits ledge = snap-cling; hits opponent = yank-to + slash; whiff = weak holo-rise then freefall."
+    },
+    {
+      "id": "downb",
+      "name": "Down B — Firewall Parry",
+      "input": "↓ + B",
+      "type": "special (counter)",
+      "damage": "1.3× reflected / 16 riposte",
+      "image": "12-down-b.png",
+      "phases": [
+        {
+          "name": "stance",
+          "ms": 180,
+          "pose": "low guard, blade diagonal",
+          "fx": [
+            "cyan hex shield up",
+            "hum sfx"
+          ]
+        },
+        {
+          "name": "window",
+          "ms": 560,
+          "pose": "held parry stance",
+          "fx": [
+            "shield pulse"
+          ],
+          "counterWindow": true
+        },
+        {
+          "name": "parry-flash",
+          "ms": 60,
+          "pose": "impact frame",
+          "fx": [
+            "time-slow",
+            "white flash",
+            "glass-shatter sfx",
+            "PARRY! pop-up"
+          ],
+          "triggered": true
+        },
+        {
+          "name": "riposte",
+          "ms": 120,
+          "pose": "explosive draw-step forward",
+          "fx": [
+            "white slash arc",
+            "shake",
+            "boom"
+          ],
+          "active": true
+        },
+        {
+          "name": "follow-through",
+          "ms": 240,
+          "pose": "extended",
+          "fx": []
+        },
+        {
+          "name": "recover",
+          "ms": 260,
+          "pose": "idle",
+          "fx": []
+        }
+      ],
+      "notes": "Counters melee at 1.3× incoming damage; reflects projectiles as plasma bolts."
+    },
+    {
+      "id": "finalsmash",
+      "name": "Final Smash — System Purge",
+      "input": "★ smash ball + B",
+      "type": "final smash",
+      "damage": "≈35% total",
+      "image": "13-final-smash.png",
+      "phases": [
+        {
+          "name": "charge",
+          "ms": 240,
+          "pose": "sheathes blade, head bows",
+          "fx": [
+            "void overlay fades in",
+            "// SYSTEM PURGE // text",
+            "charge sfx"
+          ]
+        },
+        {
+          "name": "lock-on",
+          "ms": 560,
+          "pose": "held",
+          "fx": [
+            "// TARGET ACQUIRED // text",
+            "dash sfx"
+          ],
+          "cinematic": true
+        },
+        {
+          "name": "blink-combo",
+          "ms": 390,
+          "pose": "3 glitch blinks through targets (L→R→L)",
+          "fx": [
+            "afterimages",
+            "3 slash arcs",
+            "slash sfx ×3"
+          ]
+        },
+        {
+          "name": "volley",
+          "ms": 420,
+          "pose": "mid-air dual revolver barrage",
+          "fx": [
+            "12 tracers",
+            "shot sfx ×12"
+          ]
+        },
+        {
+          "name": "finisher",
+          "ms": 110,
+          "pose": "single massive iai cut",
+          "fx": [
+            "giant white+magenta slash",
+            "flash",
+            "shake",
+            "slow-mo",
+            "CONNECTION TERMINATED text"
+          ],
+          "active": true
+        },
+        {
+          "name": "hold",
+          "ms": 300,
+          "pose": "extended pose in void",
+          "fx": []
+        },
+        {
+          "name": "exit",
+          "ms": 500,
+          "pose": "re-sheath, void fades",
+          "fx": [
+            "click sfx"
+          ]
+        }
+      ],
+      "notes": "Cinematic ultimate. Drags caught targets into a cutscene void, ends with the iai cut."
+    },
+    {
+      "id": "taunt",
+      "name": "Taunt — “Too Slow.”",
+      "input": "taunt",
+      "type": "flavor",
+      "damage": "—",
+      "image": "14-taunt.png",
+      "phases": [
+        {
+          "name": "present",
+          "ms": 170,
+          "pose": "revolvers out, head tilt",
+          "fx": [
+            "click",
+            "TOO SLOW. pop-up"
+          ]
+        },
+        {
+          "name": "spin-L",
+          "ms": 170,
+          "pose": "left revolver pirouettes on finger",
+          "fx": []
+        },
+        {
+          "name": "spin-R",
+          "ms": 170,
+          "pose": "right revolver pirouettes",
+          "fx": [
+            "click"
+          ]
+        },
+        {
+          "name": "holster-flip",
+          "ms": 370,
+          "pose": "flip-holsters both guns",
+          "fx": [
+            "double click"
+          ]
+        }
+      ],
+      "notes": "Harmless. Maximum disrespect."
+    }
+  ],
+  "rig": {
+    "referenceImages": [
+      "assets/moves/rig-bones.png",
+      "assets/moves/rig-muscles.png"
+    ],
+    "convention": "side view facing right; +X = forward, +Y = up; character origin at hips",
+    "bones": [
+      {
+        "name": "hips",
+        "parent": null,
+        "role": "root bone",
+        "notes": "controls body position + rotation; every movement starts here"
+      },
+      {
+        "name": "spine",
+        "parent": "hips",
+        "role": "torso lean"
+      },
+      {
+        "name": "chest",
+        "parent": "spine",
+        "role": "counter-rotation vs hips on runs and swings"
+      },
+      {
+        "name": "neck",
+        "parent": "chest",
+        "role": "subtle head anticipation"
+      },
+      {
+        "name": "head",
+        "parent": "neck",
+        "role": "KEEP RIGID",
+        "notes": "mask must never deform; lead rotation with the chin"
+      },
+      {
+        "name": "shoulder.L/.R",
+        "parent": "chest",
+        "role": "clavicle shrug/roll before arm swings"
+      },
+      {
+        "name": "upperArm.L/.R",
+        "parent": "shoulder",
+        "role": "arm swing",
+        "notes": "hinge at elbow only"
+      },
+      {
+        "name": "forearm.L/.R",
+        "parent": "upperArm",
+        "role": "elbow bend",
+        "notes": "one axis — elbows never bend backwards"
+      },
+      {
+        "name": "hand.L/.R",
+        "parent": "forearm",
+        "role": "weapon socket parent",
+        "notes": "grip pose baked per weapon"
+      },
+      {
+        "name": "thigh.L/.R",
+        "parent": "hips",
+        "role": "run cycle driver",
+        "notes": "knees bend backwards only"
+      },
+      {
+        "name": "shin.L/.R",
+        "parent": "thigh",
+        "role": "knee bend"
+      },
+      {
+        "name": "foot.L/.R",
+        "parent": "shin",
+        "role": "toe pivot on push-off, heel plant on landings"
+      },
+      {
+        "name": "scarf.1/.2/.3",
+        "parent": "neck",
+        "role": "physics chain",
+        "notes": "always lags motion by 2-3 frames, never leads"
+      },
+      {
+        "name": "coatHem",
+        "parent": "hips",
+        "role": "sway bone",
+        "notes": "1-2 bones, secondary motion"
+      },
+      {
+        "name": "sheath",
+        "parent": "hips",
+        "role": "static socket",
+        "notes": "back hip, katana parks here when sheathed"
+      },
+      {
+        "name": "drone",
+        "parent": null,
+        "role": "independent",
+        "notes": "orbits character, follows with delay"
+      }
+    ],
+    "weaponSockets": {
+      "katana": "hand.R (grip just below guard)",
+      "revolver.L": "hand.L",
+      "revolver.R": "hand.R",
+      "sheathedKatana": "sheath bone on hips",
+      "grappleWire": "left forearm gauntlet"
+    },
+    "animationPrinciples": [
+      "Bend at joints, never mid-bone — bones are rigid segments",
+      "Hips lead, then chest, then head — 1-2 frame delay per chain link gives follow-through",
+      "Counter-rotate chest against hips for run cycles and heavy swings",
+      "Anticipate every strike: wind opposite to the swing direction first",
+      "Scarf and coat are physics-driven lag — they settle AFTER the body stops",
+      "Slash arcs spawn along the katana blade's swept path, not on the body",
+      "Keep the head/mask rigid and stable so the silhouette stays readable",
+      "Feet: rolling contact — heel strike, flat, toe push-off"
+    ]
+  }
+}
